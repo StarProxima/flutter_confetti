@@ -6,14 +6,14 @@ void main() {
   test('callback should be called', () {
     const key = Object();
     int counter = 0;
-    Launcher.load(
+    ConfettiLauncher.load(
         key,
         LauncherConfig(
             onLaunch: () {
               counter++;
             },
             onKill: () {}));
-    Launcher.launch(key);
+    ConfettiLauncher.launch(key);
     expect(counter, equals(1));
   });
 
@@ -21,7 +21,7 @@ void main() {
     const key = Object();
     int counter = 0;
 
-    Launcher.load(
+    ConfettiLauncher.load(
         key,
         LauncherConfig(
             onLaunch: () {
@@ -29,8 +29,8 @@ void main() {
             },
             onKill: () {}));
 
-    Launcher.unload(key);
-    Launcher.launch(key);
+    ConfettiLauncher.unload(key);
+    ConfettiLauncher.launch(key);
 
     expect(counter, equals(0));
   });

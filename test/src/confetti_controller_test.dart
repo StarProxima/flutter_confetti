@@ -9,7 +9,7 @@ void main() {
 
   setUp(() {
     controller = ConfettiController();
-    Launcher.load(
+    ConfettiLauncher.load(
         controller,
         LauncherConfig(
             onLaunch: () {
@@ -20,7 +20,7 @@ void main() {
 
   tearDown(() {
     counter = 0;
-    Launcher.unload(controller);
+    ConfettiLauncher.unload(controller);
   });
 
   test('the counter should be 1', () {
@@ -35,7 +35,7 @@ void main() {
   });
 
   test('the counter should be 0', () {
-    Launcher.unload(controller);
+    ConfettiLauncher.unload(controller);
     controller.launch();
     expect(counter, equals(0));
   });
