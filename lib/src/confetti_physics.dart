@@ -34,25 +34,26 @@ class ConfettiPhysics {
   double y1 = 0;
   double y2 = 0;
 
-  ConfettiPhysics(
-      {required this.wobble,
-      required this.wobbleSpeed,
-      required this.velocity,
-      required this.angle2D,
-      required this.tiltAngle,
-      required this.color,
-      required this.decay,
-      required this.drift,
-      required this.random,
-      required this.tiltSin,
-      required this.wobbleX,
-      required this.wobbleY,
-      required this.gravity,
-      required this.ovalScalar,
-      required this.scalar,
-      required this.flat,
-      required this.tiltCos,
-      required this.totalTicks});
+  ConfettiPhysics({
+    required this.wobble,
+    required this.wobbleSpeed,
+    required this.velocity,
+    required this.angle2D,
+    required this.tiltAngle,
+    required this.color,
+    required this.decay,
+    required this.drift,
+    required this.random,
+    required this.tiltSin,
+    required this.wobbleX,
+    required this.wobbleY,
+    required this.gravity,
+    required this.ovalScalar,
+    required this.scalar,
+    required this.flat,
+    required this.tiltCos,
+    required this.totalTicks,
+  });
 
   factory ConfettiPhysics.fromOptions(
       {required ConfettiOptions options, required Color color}) {
@@ -82,7 +83,7 @@ class ConfettiPhysics {
         totalTicks: options.ticks);
   }
 
-  update() {
+  void update() {
     progress = ticket / totalTicks;
     ticket++;
 
@@ -116,7 +117,7 @@ class ConfettiPhysics {
     y2 = wobbleY + random * tiltSin;
   }
 
-  kill() {
+  void kill() {
     ticket = totalTicks + 1;
   }
 }

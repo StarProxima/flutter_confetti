@@ -34,13 +34,17 @@ class Confetti extends StatefulWidget {
   /// the default value is false.
   final bool instant;
 
-  const Confetti(
-      {super.key,
-      this.options,
-      this.particleBuilder,
-      required this.controller,
-      this.onFinished,
-      this.instant = false});
+  final Widget? child;
+
+  const Confetti({
+    super.key,
+    this.options,
+    this.particleBuilder,
+    required this.controller,
+    this.onFinished,
+    this.instant = false,
+    this.child,
+  });
 
   @override
   State<Confetti> createState() => _ConfettiState();
@@ -104,21 +108,21 @@ class _ConfettiState extends State<Confetti>
   List<Glue> glueList = [];
 
   late AnimationController animationController;
-
   late double containerWidth;
   late double containerHeight;
 
-  randomInt(int min, int max) {
+  int randomInt(int min, int max) {
     return Random().nextInt(max - min) + min;
   }
 
-  addParticles() {
+  ConfettiParticle defaultParticleBuilder(int index) =>
+      [Circle(), Square()][randomInt(0, 2)];
+
+  void addParticles() {
     final colors = options.colors;
     final colorsCount = colors.length;
 
-    final particleBuilder = widget.particleBuilder != null
-        ? widget.particleBuilder!
-        : (int index) => [Circle(), Square()][randomInt(0, 2)];
+    final particleBuilder = widget.particleBuilder ?? defaultParticleBuilder;
 
     double x = options.x * containerWidth;
     double y = options.y * containerWidth;
@@ -135,7 +139,7 @@ class _ConfettiState extends State<Confetti>
     }
   }
 
-  initAnimation() {
+  void initAnimation() {
     animationController =
         AnimationController(vsync: this, duration: const Duration(seconds: 1));
 
@@ -152,18 +156,18 @@ class _ConfettiState extends State<Confetti>
     });
   }
 
-  playAnimation() {
+  void playAnimation() {
     if (animationController.isAnimating == false) {
       animationController.repeat();
     }
   }
 
-  launch() {
+  void launch() {
     addParticles();
     playAnimation();
   }
 
-  kill() {
+  void kill() {
     for (var glue in glueList) {
       glue.physics.kill();
     }
@@ -183,8 +187,10 @@ class _ConfettiState extends State<Confetti>
       );
     }
 
-    Launcher.load(
-        widget.controller, LauncherConfig(onLaunch: launch, onKill: kill));
+    ConfettiLauncher.load(
+      widget.controller,
+      LauncherConfig(onLaunch: launch, onKill: kill),
+    );
   }
 
   @override
@@ -192,8 +198,8 @@ class _ConfettiState extends State<Confetti>
     super.didUpdateWidget(oldWidget);
 
     if (widget.controller != oldWidget.controller) {
-      Launcher.unload(oldWidget.controller);
-      Launcher.load(
+      ConfettiLauncher.unload(oldWidget.controller);
+      ConfettiLauncher.load(
           widget.controller, LauncherConfig(onLaunch: launch, onKill: kill));
     }
   }
@@ -202,7 +208,7 @@ class _ConfettiState extends State<Confetti>
   void dispose() {
     animationController.dispose();
 
-    Launcher.unload(widget.controller);
+    ConfettiLauncher.unload(widget.controller);
 
     super.dispose();
   }
@@ -216,8 +222,10 @@ class _ConfettiState extends State<Confetti>
       return CustomPaint(
         willChange: true,
         painter: Painter(
-            glueList: glueList, animationController: animationController),
-        child: const SizedBox.expand(),
+          glueList: glueList,
+          animationController: animationController,
+        ),
+        child: widget.child ?? const SizedBox.expand(),
       );
     });
   }

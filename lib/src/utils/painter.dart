@@ -5,8 +5,10 @@ class Painter extends CustomPainter {
   final AnimationController animationController;
   final List<Glue> glueList;
 
-  Painter({required this.glueList, required this.animationController})
-      : super(repaint: animationController);
+  Painter({
+    required this.glueList,
+    required this.animationController,
+  }) : super(repaint: animationController);
 
   @override
   void paint(Canvas canvas, Size size) {
