@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter_confetti/src/confetti_particle.dart';
 import 'package:flutter_confetti/src/confetti_physics.dart';
 
-class Triangle extends ConfettiParticle {
+class Triangle implements ConfettiParticle {
   @override
   void paint({
     required ConfettiPhysics physics,
@@ -17,7 +17,7 @@ class Triangle extends ConfettiParticle {
       ..lineTo(physics.x2.floor().toDouble(), physics.wobbleY.ceil().toDouble())
       ..close();
 
-    final paint = Paint()..color = physics.color.withOpacity(physics.opacity);
+    final paint = Paint()..color = physics.color;
 
     canvas.drawPath(path, paint);
 

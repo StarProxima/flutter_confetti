@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter_confetti/src/confetti_particle.dart';
 import 'package:flutter_confetti/src/confetti_physics.dart';
 
-class Star extends ConfettiParticle {
+class Star implements ConfettiParticle {
   @override
   void paint({
     required ConfettiPhysics physics,
@@ -36,7 +36,7 @@ class Star extends ConfettiParticle {
 
     path.close();
 
-    final paint = Paint()..color = physics.color.withOpacity(physics.opacity);
+    final paint = Paint()..color = physics.color;
 
     canvas.drawPath(path, paint);
 

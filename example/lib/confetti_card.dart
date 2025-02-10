@@ -44,7 +44,7 @@ class _MainAppState extends State<MainApp> {
                     particleCount: 40,
                     startVelocity: 20,
                     scalar: 0.9,
-                    spread: 60,
+                    spread: 150,
                     y: -1,
                     angle: 270,
                     ticks: 300,
@@ -58,30 +58,33 @@ class _MainAppState extends State<MainApp> {
                   confettiOptions: ConfettiOptions(
                     particleCount: 40,
                     startVelocity: 20,
-                    scalar: 1.5,
-                    spread: 60,
+                    scalar: 0.9,
+                    spread: 150,
                     y: -1,
                     angle: 270,
                     ticks: 300,
                     gravity: 0.4,
                     decay: 0.9,
                     wobbleSpeed: 0.001,
+                    waveIntensity: 1,
                   ),
                 ),
                 SizedBox(height: 100),
                 _ConfettiCard(
+                  duration: Duration(milliseconds: 2500),
                   confettiOptions: ConfettiOptions(
-                    particleCount: 20,
-                    startVelocity: 20,
-                    spread: 120,
-                    y: -1,
-                    angle: 270,
+                    particleCount: 40,
+                    startVelocity: 15,
+                    spread: 150,
+                    y: 0.25,
+                    angle: 90,
                     ticks: 500,
-                    gravity: 0.4,
+                    gravity: 0.2,
                     decay: 0.9,
                     wobbleSpeed: 0.025,
-                    driftSpread: 0.75,
-                    waveIntensity: 1,
+                    // driftSpread: 0.75,
+                    // waveIntensity: 1,
+                    // flat: true,
                   ),
                 ),
                 SizedBox(height: 100),
@@ -95,9 +98,11 @@ class _MainAppState extends State<MainApp> {
 }
 
 class _ConfettiCard extends StatefulWidget {
-  const _ConfettiCard({super.key, this.confettiOptions});
+  const _ConfettiCard({super.key, this.confettiOptions, this.duration});
 
   final ConfettiOptions? confettiOptions;
+
+  final Duration? duration;
 
   @override
   State<_ConfettiCard> createState() => __ConfettiCardState();
@@ -158,7 +163,7 @@ class __ConfettiCardState extends State<_ConfettiCard> {
         }
 
         this.timer = Timer.periodic(
-          Duration(milliseconds: 700),
+          widget.duration ?? Duration(milliseconds: 700),
           (timer) {
             controller.launch();
           },
@@ -181,6 +186,9 @@ class __ConfettiCardState extends State<_ConfettiCard> {
                       ),
                       clipBehavior: Clip.antiAlias,
                       child: Confetti(
+                        particleBuilder: (_) => ConfettiParticle.merge([
+                          Square(),
+                        ]),
                         controller: controller,
                         options: widget.confettiOptions,
                         child: child,

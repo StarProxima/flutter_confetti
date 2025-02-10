@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -8,4 +9,23 @@ abstract class ConfettiParticle {
     required ConfettiPhysics physics,
     required Canvas canvas,
   });
+
+  factory ConfettiParticle.merge(
+    List<ConfettiParticle> particles,
+  ) = ConfettiParticleMerger;
+}
+
+class ConfettiParticleMerger implements ConfettiParticle {
+  final List<ConfettiParticle> particles;
+
+  ConfettiParticleMerger(this.particles);
+
+  static final _random = Random();
+
+  late final particle = particles[_random.nextInt(particles.length)];
+
+  @override
+  void paint({required ConfettiPhysics physics, required Canvas canvas}) {
+    particle.paint(physics: physics, canvas: canvas);
+  }
 }

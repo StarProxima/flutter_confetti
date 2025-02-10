@@ -105,7 +105,10 @@ class ConfettiPhysics {
   void update() {
     tickLeft--;
 
-    opacity = tickLeft > opacityTicks ? 1 : tickLeft / opacityTicks;
+    if (tickLeft < opacityTicks) {
+      opacity = tickLeft / opacityTicks;
+      color = color.withOpacity(opacity);
+    }
 
     final wave = waveIntensity != 0
         ? sin(2 * pi * _initialRandomDouble + (tickLeft * waveIntensity / 20))
