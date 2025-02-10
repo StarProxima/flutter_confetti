@@ -55,39 +55,46 @@ class ConfettiPhysics {
     required this.totalTicks,
   });
 
+  static final _random = Random();
+
   factory ConfettiPhysics.fromOptions(
       {required ConfettiOptions options, required Color color}) {
     final radAngle = options.angle * (pi / 180);
     final radSpread = options.spread * (pi / 180);
 
     return ConfettiPhysics(
-        wobble: Random().nextDouble() * 10,
-        wobbleSpeed: min(0.11, Random().nextDouble() * 0.1 + 0.05),
-        velocity: options.startVelocity * 0.5 +
-            Random().nextDouble() * options.startVelocity,
-        angle2D:
-            -radAngle + (0.5 * radSpread - Random().nextDouble() * radSpread),
-        tiltAngle: (Random().nextDouble() * (0.75 - 0.25) + 0.25) * pi,
-        color: color,
-        decay: options.decay,
-        drift: options.drift,
-        random: Random().nextDouble() + 2,
-        tiltSin: 0,
-        tiltCos: 0,
-        wobbleX: 0,
-        wobbleY: 0,
-        gravity: options.gravity * 3,
-        ovalScalar: 0.6,
-        scalar: options.scalar,
-        flat: options.flat,
-        totalTicks: options.ticks);
+      wobble: _random.nextDouble() * 10,
+      wobbleSpeed:
+          options.wobbleSpeed ?? min(0.11, _random.nextDouble() * 0.1 + 0.05),
+      velocity: options.startVelocity * 0.5 +
+          _random.nextDouble() * options.startVelocity,
+      angle2D: -radAngle + (0.5 * radSpread - _random.nextDouble() * radSpread),
+      tiltAngle: (_random.nextDouble() * (0.75 - 0.25) + 0.25) * pi,
+      color: color,
+      decay: options.decay,
+      drift: options.drift + _random.nextDouble() * 2 - 1,
+      random: _random.nextDouble() + 2,
+      tiltSin: 0,
+      tiltCos: 0,
+      wobbleX: 0,
+      wobbleY: 0,
+      gravity: options.gravity * 3,
+      ovalScalar: 0.6,
+      scalar: options.scalar,
+      flat: options.flat,
+      totalTicks: options.ticks,
+    );
   }
+
+  late final _rand = _random.nextDouble();
 
   void update() {
     progress = ticket / totalTicks;
     ticket++;
 
-    x += cos(angle2D) * velocity + drift;
+    final d = sin(2 * pi * _rand + ticket * 0.05);
+
+    x += cos(angle2D) * velocity + drift + d;
     y += sin(angle2D) * velocity + gravity;
 
     velocity *= decay;
@@ -108,7 +115,7 @@ class ConfettiPhysics {
       tiltAngle += 0.1;
       tiltSin = sin(tiltAngle);
       tiltCos = cos(tiltAngle);
-      random = Random().nextDouble() + 2;
+      random = _random.nextDouble() + 2;
     }
 
     x1 = x + random * tiltCos;

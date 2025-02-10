@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_confetti/src/utils/glue.dart';
 
 class Painter extends CustomPainter {
-  final AnimationController animationController;
+  final Listenable listenable;
   final List<Glue> glueList;
 
   Painter({
     required this.glueList,
-    required this.animationController,
-  }) : super(repaint: animationController);
+    required this.listenable,
+  }) : super(repaint: listenable);
 
   @override
   void paint(Canvas canvas, Size size) {

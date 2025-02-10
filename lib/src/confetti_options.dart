@@ -60,21 +60,24 @@ class ConfettiOptions {
   /// Use decimals to make the confetti smaller.
   final double scalar;
 
-  const ConfettiOptions(
-      {this.colors = defaultColors,
-      this.particleCount = 50,
-      this.angle = 90,
-      this.spread = 45,
-      this.startVelocity = 45,
-      this.decay = 0.9,
-      this.gravity = 1,
-      this.drift = 0,
-      this.flat = false,
-      this.scalar = 1,
-      this.x = 0.5,
-      this.y = 0.5,
-      this.ticks = 200})
-      : assert(decay >= 0 && decay <= 1),
+  final double? wobbleSpeed;
+
+  const ConfettiOptions({
+    this.colors = defaultColors,
+    this.particleCount = 50,
+    this.angle = 90,
+    this.spread = 45,
+    this.startVelocity = 45,
+    this.decay = 0.9,
+    this.gravity = 1,
+    this.drift = 0,
+    this.flat = false,
+    this.scalar = 1,
+    this.x = 0.5,
+    this.y = 0.5,
+    this.ticks = 200,
+    this.wobbleSpeed,
+  })  : assert(decay >= 0),
         assert(ticks > 0);
 
   /// Create a copy of this object with the given fields replaced with new values.

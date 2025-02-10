@@ -28,7 +28,7 @@ class Confetti extends StatefulWidget {
   final ConfettiController controller;
 
   /// A callback that will be called when the confetti finished its animation.
-  final Function()? onFinished;
+  final void Function()? onFinished;
 
   /// if true, the confetti will be launched instantly as soon as it is created.
   /// the default value is false.
@@ -101,9 +101,7 @@ class Confetti extends StatefulWidget {
 
 class _ConfettiState extends State<Confetti>
     with SingleTickerProviderStateMixin {
-  ConfettiOptions get options {
-    return widget.options ?? const ConfettiOptions();
-  }
+  ConfettiOptions get options => widget.options ?? const ConfettiOptions();
 
   List<Glue> glueList = [];
 
@@ -140,15 +138,16 @@ class _ConfettiState extends State<Confetti>
   }
 
   void initAnimation() {
-    animationController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 1));
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    );
 
-    animationController.addListener(() {
-      final finished = !glueList.any((element) => !element.physics.finished);
+    animationController.addListener(() async {
+      final finished = glueList.every((element) => element.physics.finished);
 
       if (finished) {
         animationController.stop();
-
         if (widget.onFinished != null) {
           widget.onFinished!();
         }
@@ -157,7 +156,7 @@ class _ConfettiState extends State<Confetti>
   }
 
   void playAnimation() {
-    if (animationController.isAnimating == false) {
+    if (!animationController.isAnimating) {
       animationController.repeat();
     }
   }
@@ -200,7 +199,11 @@ class _ConfettiState extends State<Confetti>
     if (widget.controller != oldWidget.controller) {
       ConfettiLauncher.unload(oldWidget.controller);
       ConfettiLauncher.load(
-          widget.controller, LauncherConfig(onLaunch: launch, onKill: kill));
+          widget.controller,
+          LauncherConfig(
+            onLaunch: launch,
+            onKill: kill,
+          ));
     }
   }
 
@@ -223,7 +226,9 @@ class _ConfettiState extends State<Confetti>
         willChange: true,
         painter: Painter(
           glueList: glueList,
-          animationController: animationController,
+          listenable: animationController.drive(
+            CurveTween(curve: Curves.easeInOut),
+          ),
         ),
         child: widget.child ?? const SizedBox.expand(),
       );
