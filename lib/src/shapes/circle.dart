@@ -19,8 +19,7 @@ class Circle extends ConfettiParticle {
       (physics.y2 - physics.y1).abs() * physics.ovalScalar,
     );
 
-    final paint = Paint()
-      ..color = physics.color.withOpacity(1 - physics.progress);
+    final paint = Paint()..color = physics.color.withOpacity(physics.opacity);
 
     canvas.drawArc(Rect.fromCircle(center: const Offset(0, 0), radius: 1), 0,
         2 * pi, true, paint);

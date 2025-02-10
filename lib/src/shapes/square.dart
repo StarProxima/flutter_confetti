@@ -20,8 +20,7 @@ class Square extends ConfettiParticle {
 
     path.close();
 
-    final paint = Paint()
-      ..color = physics.color.withOpacity(1 - physics.progress);
+    final paint = Paint()..color = physics.color.withOpacity(physics.opacity);
 
     canvas.drawPath(path, paint);
 

@@ -16,7 +16,7 @@ class Painter extends CustomPainter {
       final glue = glueList[i];
       final physics = glue.physics;
 
-      if (!physics.finished) {
+      if (!physics.isFinished) {
         physics.update();
         glue.particle.paint(physics: physics, canvas: canvas);
       }

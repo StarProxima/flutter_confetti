@@ -107,7 +107,7 @@ class _ConfettiState extends State<Confetti>
 
   late AnimationController animationController;
   late double containerWidth;
-  late double containerHeight;
+  // late double containerHeight;
 
   int randomInt(int min, int max) {
     return Random().nextInt(max - min) + min;
@@ -144,7 +144,7 @@ class _ConfettiState extends State<Confetti>
     );
 
     animationController.addListener(() async {
-      final finished = glueList.every((element) => element.physics.finished);
+      final finished = glueList.every((element) => element.physics.isFinished);
 
       if (finished) {
         animationController.stop();
@@ -220,15 +220,13 @@ class _ConfettiState extends State<Confetti>
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       containerWidth = constraints.maxWidth;
-      containerHeight = constraints.maxHeight;
+      // containerHeight = constraints.maxHeight;
 
       return CustomPaint(
         willChange: true,
         painter: Painter(
           glueList: glueList,
-          listenable: animationController.drive(
-            CurveTween(curve: Curves.easeInOut),
-          ),
+          listenable: animationController,
         ),
         child: widget.child ?? const SizedBox.expand(),
       );

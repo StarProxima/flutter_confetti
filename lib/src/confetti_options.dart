@@ -38,12 +38,18 @@ class ConfettiOptions {
   /// Use a negative number for left and positive number for right.
   final double drift;
 
+  final double driftSpread;
+
   ///  Optionally turns off the tilt and wobble that three dimensional confetti
   /// would have in the real world.
   final bool flat;
 
+  final double? wobbleSpeed;
+
   /// How many times the confetti will move.
   final int ticks;
+
+  final int opacityTics;
 
   /// The x position on the page,
   /// with 0 being the left edge and 1 being the right edge.
@@ -60,7 +66,7 @@ class ConfettiOptions {
   /// Use decimals to make the confetti smaller.
   final double scalar;
 
-  final double? wobbleSpeed;
+  final double waveIntensity;
 
   const ConfettiOptions({
     this.colors = defaultColors,
@@ -71,12 +77,15 @@ class ConfettiOptions {
     this.decay = 0.9,
     this.gravity = 1,
     this.drift = 0,
+    this.driftSpread = 0,
     this.flat = false,
+    this.wobbleSpeed,
     this.scalar = 1,
     this.x = 0.5,
     this.y = 0.5,
     this.ticks = 200,
-    this.wobbleSpeed,
+    this.opacityTics = 75,
+    this.waveIntensity = 0,
   })  : assert(decay >= 0),
         assert(ticks > 0);
 

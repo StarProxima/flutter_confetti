@@ -20,12 +20,15 @@ class ConfettiPhysics {
   double tiltSin;
   double tiltCos;
   double random;
+  double waveIntensity;
   bool flat;
 
-  int totalTicks;
-  int ticket = 0;
-  double progress = 0;
-  bool get finished => ticket > totalTicks;
+  int tickLeft;
+  final int totalTicks;
+  final int opacityTicks;
+
+  double opacity = 1;
+  bool get isFinished => tickLeft <= 0;
 
   double x = 0;
   double y = 0;
@@ -33,6 +36,10 @@ class ConfettiPhysics {
   double x2 = 0;
   double y1 = 0;
   double y2 = 0;
+
+  static final _random = Random();
+
+  late final _initialRandomDouble = _random.nextDouble();
 
   ConfettiPhysics({
     required this.wobble,
@@ -50,17 +57,20 @@ class ConfettiPhysics {
     required this.gravity,
     required this.ovalScalar,
     required this.scalar,
+    required this.waveIntensity,
     required this.flat,
     required this.tiltCos,
     required this.totalTicks,
+    required this.opacityTicks,
+    required this.tickLeft,
   });
-
-  static final _random = Random();
 
   factory ConfettiPhysics.fromOptions(
       {required ConfettiOptions options, required Color color}) {
     final radAngle = options.angle * (pi / 180);
     final radSpread = options.spread * (pi / 180);
+
+    final driftSpread = options.driftSpread;
 
     return ConfettiPhysics(
       wobble: _random.nextDouble() * 10,
@@ -72,7 +82,10 @@ class ConfettiPhysics {
       tiltAngle: (_random.nextDouble() * (0.75 - 0.25) + 0.25) * pi,
       color: color,
       decay: options.decay,
-      drift: options.drift + _random.nextDouble() * 2 - 1,
+      drift: options.drift +
+          (driftSpread != 0
+              ? _random.nextDouble() * driftSpread - driftSpread / 2
+              : 0),
       random: _random.nextDouble() + 2,
       tiltSin: 0,
       tiltCos: 0,
@@ -81,20 +94,24 @@ class ConfettiPhysics {
       gravity: options.gravity * 3,
       ovalScalar: 0.6,
       scalar: options.scalar,
+      waveIntensity: options.waveIntensity,
       flat: options.flat,
       totalTicks: options.ticks,
+      opacityTicks: options.opacityTics,
+      tickLeft: options.ticks,
     );
   }
 
-  late final _rand = _random.nextDouble();
-
   void update() {
-    progress = ticket / totalTicks;
-    ticket++;
+    tickLeft--;
 
-    final d = sin(2 * pi * _rand + ticket * 0.05);
+    opacity = tickLeft > opacityTicks ? 1 : tickLeft / opacityTicks;
 
-    x += cos(angle2D) * velocity + drift + d;
+    final wave = waveIntensity != 0
+        ? sin(2 * pi * _initialRandomDouble + (tickLeft * waveIntensity / 20))
+        : 0.0;
+
+    x += cos(angle2D) * velocity + drift + wave;
     y += sin(angle2D) * velocity + gravity;
 
     velocity *= decay;
@@ -125,6 +142,6 @@ class ConfettiPhysics {
   }
 
   void kill() {
-    ticket = totalTicks + 1;
+    tickLeft = 0;
   }
 }
