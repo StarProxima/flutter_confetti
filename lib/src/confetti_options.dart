@@ -68,6 +68,11 @@ class ConfettiOptions {
 
   final double waveIntensity;
 
+  final Duration? launchDelay;
+  final Duration? launchPeriod;
+  final Duration? launchInterval;
+  final int? launchCount;
+
   const ConfettiOptions({
     this.colors = defaultColors,
     this.particleCount = 50,
@@ -86,6 +91,10 @@ class ConfettiOptions {
     this.ticks = 200,
     this.opacityTicks = 75,
     this.waveIntensity = 0,
+    this.launchDelay,
+    this.launchPeriod,
+    this.launchInterval,
+    this.launchCount,
   })  : assert(decay >= 0),
         assert(ticks > 0);
 
@@ -108,6 +117,10 @@ class ConfettiOptions {
     int? opacityTicks,
     double? waveIntensity,
     List<Color>? colors,
+    Duration? launchDelay,
+    Duration? launchPeriod,
+    Duration? launchInterval,
+    int? launchCount,
   }) {
     return ConfettiOptions(
       particleCount: particleCount ?? this.particleCount,
@@ -127,6 +140,10 @@ class ConfettiOptions {
       waveIntensity: waveIntensity ?? this.waveIntensity,
       opacityTicks: opacityTicks ?? this.opacityTicks,
       colors: colors ?? this.colors,
+      launchDelay: launchDelay ?? this.launchDelay,
+      launchPeriod: launchPeriod ?? this.launchPeriod,
+      launchInterval: launchInterval ?? this.launchInterval,
+      launchCount: launchCount ?? this.launchCount,
     );
   }
 }

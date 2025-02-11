@@ -8,11 +8,12 @@ void main() {
   int counter = 0;
 
   setUp(() {
-    controller = ConfettiController();
+    controller = const ConfettiController();
+
     ConfettiLauncher.load(
         controller,
         LauncherConfig(
-            onLaunch: () {
+            onLaunch: (_) async {
               counter++;
             },
             onKill: () {}));

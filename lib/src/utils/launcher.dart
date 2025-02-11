@@ -12,8 +12,11 @@ class ConfettiLauncher {
     _bullets[controller] = launcherConfig;
   }
 
-  static void launch(ConfettiController controller, ConfettiOptions? options) {
-    _bullets[controller]?.onLaunch(options);
+  static Future<void> launch(
+    ConfettiController controller,
+    ConfettiOptions? options,
+  ) async {
+    await _bullets[controller]?.onLaunch(options);
   }
 
   static void kill(ConfettiController controller) {

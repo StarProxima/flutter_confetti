@@ -28,7 +28,9 @@ class Confetti extends StatefulWidget {
   /// the default particles are circles and squares.
   final ParticleBuilder? particleBuilder;
 
-  final void Function()? onActive;
+  final void Function()? onReady;
+
+  final void Function(ConfettiOptions options)? onLaunch;
 
   /// A callback that will be called when the confetti finished its animation.
   final void Function()? onFinished;
@@ -37,9 +39,6 @@ class Confetti extends StatefulWidget {
   /// the default value is false.
   final bool instant;
 
-  final Duration? repeatInterval;
-  final Duration? repeatDuration;
-
   final Widget? child;
 
   const Confetti({
@@ -47,11 +46,10 @@ class Confetti extends StatefulWidget {
     required this.controller,
     this.options,
     this.particleBuilder,
-    this.onActive,
+    this.onReady,
+    this.onLaunch,
     this.onFinished,
     this.instant = false,
-    this.repeatInterval,
-    this.repeatDuration,
     this.child,
   });
 
@@ -114,7 +112,7 @@ class _ConfettiState extends State<Confetti>
 
   List<Glue> glueList = [];
 
-  Timer? repeatTimer;
+  List<Timer> timers = [];
 
   late AnimationController animationController;
   late double containerWidth;
@@ -128,6 +126,10 @@ class _ConfettiState extends State<Confetti>
       [Circle(), Square()][randomInt(0, 2)];
 
   void addParticles(ConfettiOptions options) {
+    playAnimation();
+
+    widget.onLaunch?.call(options);
+
     final colors = options.colors;
     final colorsCount = colors.length;
 
@@ -171,40 +173,86 @@ class _ConfettiState extends State<Confetti>
     }
   }
 
-  void launch(ConfettiOptions? options) {
-    addParticles(options ?? this.options);
-    playAnimation();
+  Future<void> launch(ConfettiOptions? confettiOptions) async {
+    final options = confettiOptions ?? this.options;
+
+    final delay = options.launchDelay;
+    if (delay != null) {
+      await Future.delayed(delay);
+
+      if (!context.mounted) return;
+    }
+
+    setupTimerForOptions(options);
+
+    addParticles(options);
+
+    final launchPeriod = options.launchPeriod;
+
+    final launchInterval = options.launchInterval;
+    final launchCount = options.launchCount;
+
+    final durationFromCount = launchInterval != null && launchCount != null
+        ? Duration(milliseconds: launchInterval.inMilliseconds * launchCount)
+        : null;
+
+    final Duration? minDuration;
+
+    if (launchPeriod == null) {
+      minDuration = durationFromCount;
+    } else if (durationFromCount == null) {
+      minDuration = launchPeriod;
+    } else if (launchPeriod < durationFromCount) {
+      minDuration = launchPeriod;
+    } else {
+      minDuration = durationFromCount;
+    }
+
+    if (minDuration != null) await Future.delayed(minDuration);
   }
 
   void kill() {
     for (var glue in glueList) {
       glue.physics.kill();
     }
+
+    for (var timer in timers) {
+      timer.cancel();
+    }
   }
 
-  void setupRepeatTimer() {
-    repeatTimer?.cancel();
-    final interval = widget.repeatInterval;
+  void setupTimerForOptions(ConfettiOptions options) {
+    final interval = options.launchInterval;
 
     if (interval != null) {
-      repeatTimer = Timer.periodic(
+      final timer = Timer.periodic(
         interval,
         (timer) {
-          final duration = widget.repeatDuration;
-          if (duration != null) {
+          final launchPeriod = options.launchPeriod;
+          if (launchPeriod != null) {
             final timerDuration = Duration(
               milliseconds: interval.inMilliseconds * timer.tick,
             );
 
-            if (timerDuration > duration) {
+            if (timerDuration >= launchPeriod) {
               timer.cancel();
               return;
             }
           }
 
-          launch(null);
+          final launchCount = options.launchCount;
+          if (launchCount != null) {
+            if (timer.tick >= launchCount) {
+              timer.cancel();
+              return;
+            }
+          }
+
+          addParticles(options);
         },
       );
+
+      timers.add(timer);
     }
   }
 
@@ -216,14 +264,10 @@ class _ConfettiState extends State<Confetti>
 
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
-        widget.onActive?.call();
+        widget.onReady?.call();
         if (widget.instant) launch(null);
       },
     );
-
-    if (widget.repeatInterval != null) {
-      setupRepeatTimer();
-    }
 
     ConfettiLauncher.load(
       widget.controller,
@@ -248,20 +292,15 @@ class _ConfettiState extends State<Confetti>
         ),
       );
     }
-
-    if (widget.repeatInterval != oldWidget.repeatInterval) {
-      setupRepeatTimer();
-    }
   }
 
   @override
   void dispose() {
     animationController.dispose();
 
-    ConfettiLauncher.unload(widget.controller);
+    kill();
 
-    repeatTimer?.cancel();
-    repeatTimer = null;
+    ConfettiLauncher.unload(widget.controller);
 
     super.dispose();
   }

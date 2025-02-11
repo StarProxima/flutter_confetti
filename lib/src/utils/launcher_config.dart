@@ -1,7 +1,7 @@
 import 'package:flutter_confetti/src/confetti_options.dart';
 
 class LauncherConfig {
-  final void Function(ConfettiOptions? options) onLaunch;
+  final Future<void> Function(ConfettiOptions? options) onLaunch;
   final void Function() onKill;
 
   const LauncherConfig({
