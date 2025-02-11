@@ -9,16 +9,18 @@ class Quadrangle implements ConfettiParticle {
   final double distortionY;
   static final _random = Random();
 
-  final double dx1;
-  final double dy1;
-  final double dx2;
-  final double dy2;
+  double get _r => _random.nextDouble() * 2 - 1;
 
-  Quadrangle({this.distortionX = 2.0, this.distortionY = 2.0})
-      : dx1 = (_random.nextDouble() * 2 - 1) * distortionX,
-        dy1 = (_random.nextDouble() * 2 - 1) * distortionY,
-        dx2 = (_random.nextDouble() * 2 - 1) * distortionX,
-        dy2 = (_random.nextDouble() * 2 - 1) * distortionY;
+  late final double dx1 = _r * distortionX;
+  late final double dy1 = _r * distortionY;
+  late final double dx2 = _r * distortionX;
+  late final double dy2 = _r * distortionY;
+  late final double dx3 = _r * distortionX;
+  late final double dy3 = _r * distortionY;
+  late final double dx4 = _r * distortionX;
+  late final double dy4 = _r * distortionY;
+
+  Quadrangle({this.distortionX = 2.0, this.distortionY = 2.0});
 
   @override
   void paint({
@@ -35,20 +37,21 @@ class Quadrangle implements ConfettiParticle {
         physics.y + dy1,
       )
       ..lineTo(
-        physics.wobbleX + dx2,
-        physics.y1 + dy1,
+        physics.wobbleX + dx3,
+        physics.y1 + dy3,
       )
       ..lineTo(
         physics.x2 + dx2,
         physics.y2 + dy2,
       )
       ..lineTo(
-        physics.x1 + dx1,
-        physics.wobbleY + dy2,
+        physics.x1 + dx4,
+        physics.wobbleY + dy4,
       )
       ..close();
 
     canvas.drawPath(path, paint);
+
     canvas.restore();
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_confetti/src/confetti_options.dart';
 
 class ConfettiPhysics {
@@ -102,6 +103,11 @@ class ConfettiPhysics {
     );
   }
 
+  late final double dx1 = (_random.nextDouble() * 2 - 1) * 2;
+  late final double dy1 = (_random.nextDouble() * 2 - 1) * 2;
+  late final double dx2 = (_random.nextDouble() * 2 - 1) * 2;
+  late final double dy2 = (_random.nextDouble() * 2 - 1) * 2;
+
   void update() {
     tickLeft--;
 
@@ -111,7 +117,8 @@ class ConfettiPhysics {
     }
 
     final wave = waveIntensity != 0
-        ? sin(2 * pi * _initialRandomDouble + (tickLeft * waveIntensity / 20))
+        ? sin(2 * pi * _initialRandomDouble +
+            (tickLeft * waveIntensity * (_initialRandomDouble + 0.1) / 20))
         : 0.0;
 
     x += cos(angle2D) * velocity + drift + wave;
