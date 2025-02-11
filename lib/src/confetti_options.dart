@@ -49,7 +49,7 @@ class ConfettiOptions {
   /// How many times the confetti will move.
   final int ticks;
 
-  final int opacityTics;
+  final int opacityTicks;
 
   /// The x position on the page,
   /// with 0 being the left edge and 1 being the right edge.
@@ -84,7 +84,7 @@ class ConfettiOptions {
     this.x = 0.5,
     this.y = 0.5,
     this.ticks = 200,
-    this.opacityTics = 75,
+    this.opacityTicks = 75,
     this.waveIntensity = 0,
   })  : assert(decay >= 0),
         assert(ticks > 0);
@@ -103,6 +103,10 @@ class ConfettiOptions {
     double? x,
     double? y,
     int? ticks,
+    double? driftSpread,
+    double? wobbleSpeed,
+    int? opacityTicks,
+    double? waveIntensity,
     List<Color>? colors,
   }) {
     return ConfettiOptions(
@@ -118,6 +122,10 @@ class ConfettiOptions {
       x: x ?? this.x,
       y: y ?? this.y,
       ticks: ticks ?? this.ticks,
+      driftSpread: drift ?? this.driftSpread,
+      wobbleSpeed: wobbleSpeed ?? this.wobbleSpeed,
+      waveIntensity: waveIntensity ?? this.waveIntensity,
+      opacityTicks: opacityTicks ?? this.opacityTicks,
       colors: colors ?? this.colors,
     );
   }

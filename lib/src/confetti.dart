@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -15,6 +16,10 @@ import 'package:flutter_confetti/src/shapes/circle.dart';
 typedef ParticleBuilder = ConfettiParticle Function(int index);
 
 class Confetti extends StatefulWidget {
+  /// The controller of the confetti.
+  /// in general, you don't need to provide one.
+  final ConfettiController controller;
+
   /// The options used to launch the confetti.
   final ConfettiOptions? options;
 
@@ -23,9 +28,7 @@ class Confetti extends StatefulWidget {
   /// the default particles are circles and squares.
   final ParticleBuilder? particleBuilder;
 
-  /// The controller of the confetti.
-  /// in general, you don't need to provide one.
-  final ConfettiController controller;
+  final void Function()? onActive;
 
   /// A callback that will be called when the confetti finished its animation.
   final void Function()? onFinished;
@@ -34,15 +37,21 @@ class Confetti extends StatefulWidget {
   /// the default value is false.
   final bool instant;
 
+  final Duration? repeatInterval;
+  final Duration? repeatDuration;
+
   final Widget? child;
 
   const Confetti({
     super.key,
+    required this.controller,
     this.options,
     this.particleBuilder,
-    required this.controller,
+    this.onActive,
     this.onFinished,
     this.instant = false,
+    this.repeatInterval,
+    this.repeatDuration,
     this.child,
   });
 
@@ -105,6 +114,8 @@ class _ConfettiState extends State<Confetti>
 
   List<Glue> glueList = [];
 
+  Timer? repeatTimer;
+
   late AnimationController animationController;
   late double containerWidth;
   // late double containerHeight;
@@ -116,7 +127,7 @@ class _ConfettiState extends State<Confetti>
   ConfettiParticle defaultParticleBuilder(int index) =>
       [Circle(), Square()][randomInt(0, 2)];
 
-  void addParticles() {
+  void addParticles(ConfettiOptions options) {
     final colors = options.colors;
     final colorsCount = colors.length;
 
@@ -148,9 +159,8 @@ class _ConfettiState extends State<Confetti>
 
       if (finished) {
         animationController.stop();
-        if (widget.onFinished != null) {
-          widget.onFinished!();
-        }
+
+        widget.onFinished?.call();
       }
     });
   }
@@ -161,8 +171,8 @@ class _ConfettiState extends State<Confetti>
     }
   }
 
-  void launch() {
-    addParticles();
+  void launch(ConfettiOptions? options) {
+    addParticles(options ?? this.options);
     playAnimation();
   }
 
@@ -172,23 +182,55 @@ class _ConfettiState extends State<Confetti>
     }
   }
 
+  void setupRepeatTimer() {
+    repeatTimer?.cancel();
+    final interval = widget.repeatInterval;
+
+    if (interval != null) {
+      repeatTimer = Timer.periodic(
+        interval,
+        (timer) {
+          final duration = widget.repeatDuration;
+          if (duration != null) {
+            final timerDuration = Duration(
+              milliseconds: interval.inMilliseconds * timer.tick,
+            );
+
+            if (timerDuration > duration) {
+              timer.cancel();
+              return;
+            }
+          }
+
+          launch(null);
+        },
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
 
     initAnimation();
 
-    if (widget.instant) {
-      WidgetsBinding.instance.addPostFrameCallback(
-        (_) {
-          launch();
-        },
-      );
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        widget.onActive?.call();
+        if (widget.instant) launch(null);
+      },
+    );
+
+    if (widget.repeatInterval != null) {
+      setupRepeatTimer();
     }
 
     ConfettiLauncher.load(
       widget.controller,
-      LauncherConfig(onLaunch: launch, onKill: kill),
+      LauncherConfig(
+        onLaunch: launch,
+        onKill: kill,
+      ),
     );
   }
 
@@ -199,11 +241,16 @@ class _ConfettiState extends State<Confetti>
     if (widget.controller != oldWidget.controller) {
       ConfettiLauncher.unload(oldWidget.controller);
       ConfettiLauncher.load(
-          widget.controller,
-          LauncherConfig(
-            onLaunch: launch,
-            onKill: kill,
-          ));
+        widget.controller,
+        LauncherConfig(
+          onLaunch: launch,
+          onKill: kill,
+        ),
+      );
+    }
+
+    if (widget.repeatInterval != oldWidget.repeatInterval) {
+      setupRepeatTimer();
     }
   }
 
@@ -212,6 +259,9 @@ class _ConfettiState extends State<Confetti>
     animationController.dispose();
 
     ConfettiLauncher.unload(widget.controller);
+
+    repeatTimer?.cancel();
+    repeatTimer = null;
 
     super.dispose();
   }

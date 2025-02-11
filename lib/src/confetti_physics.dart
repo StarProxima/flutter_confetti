@@ -98,7 +98,7 @@ class ConfettiPhysics {
       waveIntensity: options.waveIntensity,
       flat: options.flat,
       totalTicks: options.ticks,
-      opacityTicks: options.opacityTics,
+      opacityTicks: options.opacityTicks,
       tickLeft: options.ticks,
     );
   }
