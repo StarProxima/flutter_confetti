@@ -32,6 +32,6 @@ class ParticleGlueBatch {
   }
 
   void kill() {
-    tickLeft == 0;
+    tickLeft = 0;
   }
 }

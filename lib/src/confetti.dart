@@ -1,17 +1,14 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_confetti/src/confetti_controller.dart';
 import 'package:flutter_confetti/src/confetti_options.dart';
 import 'package:flutter_confetti/src/confetti_physics.dart';
-import 'package:flutter_confetti/src/shapes/square.dart';
 import 'package:flutter_confetti/src/utils/particle_glue.dart';
 import 'package:flutter_confetti/src/utils/confetti_launcher.dart';
 import 'package:flutter_confetti/src/utils/confetti_launcher_config.dart';
 import 'package:flutter_confetti/src/utils/confetti_painter.dart';
 import 'package:flutter_confetti/src/confetti_particle.dart';
-import 'package:flutter_confetti/src/shapes/circle.dart';
 import 'package:flutter_confetti/src/utils/particle_glue_batch.dart';
 
 typedef ParticleBuilder = ConfettiParticle Function(int index);
@@ -19,7 +16,7 @@ typedef ParticleBuilder = ConfettiParticle Function(int index);
 class Confetti extends StatefulWidget {
   final ConfettiController controller;
   final ConfettiOptions? options;
-  final ParticleBuilder? particleBuilder;
+  final ParticleBuilder particleBuilder;
   final void Function()? onReady;
   final void Function(ConfettiOptions options)? onLaunch;
   final void Function()? onFinished;
@@ -30,7 +27,7 @@ class Confetti extends StatefulWidget {
     super.key,
     required this.controller,
     this.options,
-    this.particleBuilder,
+    this.particleBuilder = ConfettiParticle.defaultBuilder,
     this.onReady,
     this.onLaunch,
     this.onFinished,
@@ -44,39 +41,40 @@ class Confetti extends StatefulWidget {
   static ConfettiController launch(
     BuildContext context, {
     required ConfettiOptions options,
-    ParticleBuilder? particleBuilder,
-    Function(OverlayEntry overlayEntry)? insertInOverlay,
-    Function(OverlayEntry overlayEntry)? onFinished,
+    ParticleBuilder particleBuilder = ConfettiParticle.defaultBuilder,
+    void Function(OverlayEntry overlayEntry)? insertInOverlay,
+    void Function(OverlayEntry overlayEntry)? onFinished,
   }) {
     OverlayEntry? overlayEntry;
     final controller = ConfettiController();
 
     overlayEntry = OverlayEntry(
-        builder: (BuildContext ctx) {
-          final height = MediaQuery.of(ctx).size.height;
-          final width = MediaQuery.of(ctx).size.width;
+      builder: (BuildContext ctx) {
+        final height = MediaQuery.of(ctx).size.height;
+        final width = MediaQuery.of(ctx).size.width;
 
-          return Positioned(
-            left: width * options.x,
-            top: height * options.y,
-            width: 2,
-            height: 2,
-            child: Confetti(
-              controller: controller,
-              options: options.copyWith(x: 0.5, y: 0.5),
-              particleBuilder: particleBuilder,
-              onFinished: () {
-                if (onFinished != null) {
-                  onFinished(overlayEntry!);
-                } else {
-                  overlayEntry?.remove();
-                }
-              },
-              instant: true,
-            ),
-          );
-        },
-        opaque: false);
+        return Positioned(
+          left: width * options.x,
+          top: height * options.y,
+          width: 2,
+          height: 2,
+          child: Confetti(
+            controller: controller,
+            options: options.copyWith(x: 0.5, y: 0.5),
+            particleBuilder: particleBuilder,
+            onFinished: () {
+              if (onFinished != null) {
+                onFinished(overlayEntry!);
+              } else {
+                overlayEntry?.remove();
+              }
+            },
+            instant: true,
+          ),
+        );
+      },
+      opaque: false,
+    );
 
     if (insertInOverlay != null) {
       insertInOverlay(overlayEntry);
@@ -99,19 +97,10 @@ class _ConfettiState extends State<Confetti>
   late AnimationController animationController;
   late Size size;
 
-  int randomInt(int min, int max) {
-    return Random().nextInt(max - min) + min;
-  }
-
-  ConfettiParticle defaultParticleBuilder(int index) =>
-      [Circle(), Square()][randomInt(0, 2)];
-
   void addParticles(ConfettiOptions options) {
     playAnimation();
 
     widget.onLaunch?.call(options);
-
-    final particleBuilder = widget.particleBuilder ?? defaultParticleBuilder;
 
     double x = options.x * size.width;
     double y = options.y * size.height;
@@ -125,7 +114,10 @@ class _ConfettiState extends State<Confetti>
         y: y,
       );
 
-      final glue = ParticleGlue(particle: particleBuilder(i), physics: physic);
+      final glue = ParticleGlue(
+        particle: widget.particleBuilder(i),
+        physics: physic,
+      );
 
       glues.add(glue);
     }
