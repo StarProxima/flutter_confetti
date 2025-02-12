@@ -1,4 +1,4 @@
-import 'package:flutter_confetti/src/confetti_controller.dart';
+import 'package:flutter_confetti/src/utils/confetti_controller.dart';
 import 'package:flutter_confetti/src/utils/confetti_launcher.dart';
 import 'package:flutter_confetti/src/utils/confetti_launcher_config.dart';
 import 'package:flutter_test/flutter_test.dart';

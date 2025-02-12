@@ -1,4 +1,4 @@
-import '../confetti_options.dart';
+import 'confetti_options.dart';
 
 class ConfettiLauncherConfig {
   final Future<void> Function(ConfettiOptions? options) onLaunch;

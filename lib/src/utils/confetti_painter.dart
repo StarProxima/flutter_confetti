@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
-import 'particle_glue_batch.dart';
+import '../particle/particle_batch.dart';
 
 class ConfettiPainter extends CustomPainter {
-  final List<ParticleGlueBatch> glueBatches;
-
+  final List<ParticleBatch> batches;
   final void Function() onTick;
 
   ConfettiPainter({
     required super.repaint,
-    required this.glueBatches,
+    required this.batches,
     required this.onTick,
   });
 
@@ -17,8 +16,8 @@ class ConfettiPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     onTick();
 
-    for (final batch in glueBatches) {
-      batch.paint(canvas, size);
+    for (final batch in batches) {
+      batch.paint(canvas);
     }
   }
 

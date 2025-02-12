@@ -1,13 +1,13 @@
 import 'dart:ui';
 
-import '../confetti_physics.dart';
-import 'particle/confetti_particle.dart';
+import '../particle/particle_physics.dart';
+import 'painter/particle_painter.dart';
 
-class SquareParticle implements ConfettiParticle {
+class SquareParticle implements ParticlePainter {
   @override
   void paint({
-    required ConfettiPhysics physics,
     required Canvas canvas,
+    required ParticlePhysics physics,
   }) {
     final path = Path()
       ..moveTo(
