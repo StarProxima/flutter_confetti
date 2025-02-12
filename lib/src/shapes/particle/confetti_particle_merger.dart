@@ -3,22 +3,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
-import 'package:flutter_confetti/src/confetti_physics.dart';
 
-abstract class ConfettiParticle {
-  void paint({
-    required ConfettiPhysics physics,
-    required Canvas canvas,
-  });
-
-  factory ConfettiParticle.merge(
-    List<ConfettiParticle> particles,
-  ) = ConfettiParticleMerger;
-
-  factory ConfettiParticle.defaultBuilder(int _) => ConfettiParticleMerger(
-        [CircleParticle(), SquareParticle()],
-      );
-}
+import 'confetti_particle.dart';
 
 class ConfettiParticleMerger implements ConfettiParticle {
   final List<ConfettiParticle> particles;

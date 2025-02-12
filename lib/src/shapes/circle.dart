@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:flutter_confetti/src/confetti_particle.dart';
-import 'package:flutter_confetti/src/confetti_physics.dart';
+import '../../flutter_confetti.dart';
+import 'particle/confetti_particle.dart';
 
 class CircleParticle implements ConfettiParticle {
   @override

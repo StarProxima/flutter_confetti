@@ -8,8 +8,9 @@ import 'package:flutter_confetti/src/utils/particle_glue.dart';
 import 'package:flutter_confetti/src/utils/confetti_launcher.dart';
 import 'package:flutter_confetti/src/utils/confetti_launcher_config.dart';
 import 'package:flutter_confetti/src/utils/confetti_painter.dart';
-import 'package:flutter_confetti/src/confetti_particle.dart';
 import 'package:flutter_confetti/src/utils/particle_glue_batch.dart';
+
+import 'shapes/particle/confetti_particle.dart';
 
 typedef ParticleBuilder = ConfettiParticle Function(int index);
 
