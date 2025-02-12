@@ -1,6 +1,6 @@
 import 'package:flutter_confetti/src/confetti_controller.dart';
-import 'package:flutter_confetti/src/utils/launcher.dart';
-import 'package:flutter_confetti/src/utils/launcher_config.dart';
+import 'package:flutter_confetti/src/utils/confetti_launcher.dart';
+import 'package:flutter_confetti/src/utils/confetti_launcher_config.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -12,7 +12,7 @@ void main() {
 
     ConfettiLauncher.load(
         controller,
-        LauncherConfig(
+        ConfettiLauncherConfig(
             onLaunch: (_) async {
               counter++;
             },

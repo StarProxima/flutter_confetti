@@ -1,10 +1,10 @@
 import 'package:flutter_confetti/src/confetti_options.dart';
 
-class LauncherConfig {
+class ConfettiLauncherConfig {
   final Future<void> Function(ConfettiOptions? options) onLaunch;
   final void Function() onKill;
 
-  const LauncherConfig({
+  const ConfettiLauncherConfig({
     required this.onLaunch,
     required this.onKill,
   });

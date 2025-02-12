@@ -6,12 +6,13 @@ import 'package:flutter_confetti/src/confetti_controller.dart';
 import 'package:flutter_confetti/src/confetti_options.dart';
 import 'package:flutter_confetti/src/confetti_physics.dart';
 import 'package:flutter_confetti/src/shapes/square.dart';
-import 'package:flutter_confetti/src/utils/glue.dart';
-import 'package:flutter_confetti/src/utils/launcher.dart';
-import 'package:flutter_confetti/src/utils/launcher_config.dart';
-import 'package:flutter_confetti/src/utils/painter.dart';
+import 'package:flutter_confetti/src/utils/particle_glue.dart';
+import 'package:flutter_confetti/src/utils/confetti_launcher.dart';
+import 'package:flutter_confetti/src/utils/confetti_launcher_config.dart';
+import 'package:flutter_confetti/src/utils/confetti_painter.dart';
 import 'package:flutter_confetti/src/confetti_particle.dart';
 import 'package:flutter_confetti/src/shapes/circle.dart';
+import 'package:flutter_confetti/src/utils/particle_glue_batch.dart';
 
 typedef ParticleBuilder = ConfettiParticle Function(int index);
 
@@ -116,13 +117,12 @@ class _ConfettiState extends State<Confetti>
     with SingleTickerProviderStateMixin {
   ConfettiOptions get options => widget.options ?? const ConfettiOptions();
 
-  List<Glue> glueList = [];
+  List<ParticleGlueBatch> glueBatches = [];
 
   List<Timer> timers = [];
 
   late AnimationController animationController;
-  late double containerWidth;
-  // late double containerHeight;
+  late Size size;
 
   int randomInt(int min, int max) {
     return Random().nextInt(max - min) + min;
@@ -141,8 +141,10 @@ class _ConfettiState extends State<Confetti>
 
     final particleBuilder = widget.particleBuilder ?? defaultParticleBuilder;
 
-    double x = options.x * containerWidth;
-    double y = options.y * containerHeight;
+    double x = options.x * size.width;
+    double y = options.y * size.height;
+
+    final glues = <ParticleGlue>[];
 
     for (int i = 0; i < options.particleCount; i++) {
       final color = colors[i % colorsCount];
@@ -150,10 +152,17 @@ class _ConfettiState extends State<Confetti>
         ..x = x
         ..y = y;
 
-      final glue = Glue(particle: particleBuilder(i), physics: physic);
+      final glue = ParticleGlue(particle: particleBuilder(i), physics: physic);
 
-      glueList.add(glue);
+      glues.add(glue);
     }
+
+    final batch = ParticleGlueBatch(
+      glues: glues,
+      tickLeft: options.ticks,
+    );
+
+    glueBatches.add(batch);
   }
 
   void initAnimation() {
@@ -163,7 +172,7 @@ class _ConfettiState extends State<Confetti>
     );
 
     animationController.addListener(() async {
-      final finished = glueList.every((element) => element.physics.isFinished);
+      final finished = glueBatches.every((batch) => batch.isFinished);
 
       if (finished) {
         animationController.stop();
@@ -218,8 +227,8 @@ class _ConfettiState extends State<Confetti>
   }
 
   void kill() {
-    for (var glue in glueList) {
-      glue.physics.kill();
+    for (var batch in glueBatches) {
+      batch.kill();
     }
 
     for (var timer in timers) {
@@ -270,6 +279,8 @@ class _ConfettiState extends State<Confetti>
 
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
+        size = (context as Element).size!;
+
         widget.onReady?.call();
         if (widget.instant) launch(null);
       },
@@ -277,7 +288,7 @@ class _ConfettiState extends State<Confetti>
 
     ConfettiLauncher.load(
       widget.controller,
-      LauncherConfig(
+      ConfettiLauncherConfig(
         onLaunch: launch,
         onKill: kill,
       ),
@@ -292,7 +303,7 @@ class _ConfettiState extends State<Confetti>
       ConfettiLauncher.unload(oldWidget.controller);
       ConfettiLauncher.load(
         widget.controller,
-        LauncherConfig(
+        ConfettiLauncherConfig(
           onLaunch: launch,
           onKill: kill,
         ),
@@ -313,18 +324,20 @@ class _ConfettiState extends State<Confetti>
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      containerWidth = constraints.maxWidth;
-      // containerHeight = constraints.maxHeight;
+    return CustomPaint(
+      willChange: true,
+      painter: ConfettiPainter(
+        repaint: animationController,
+        glueBatches: glueBatches,
+        onTick: () {
+          glueBatches.removeWhere((batch) => batch.isFinished);
 
-      return CustomPaint(
-        willChange: true,
-        painter: Painter(
-          glueList: glueList,
-          listenable: animationController,
-        ),
-        child: widget.child ?? const SizedBox.expand(),
-      );
-    });
+          for (final batch in glueBatches) {
+            batch.update();
+          }
+        },
+      ),
+      child: widget.child ?? const SizedBox.expand(),
+    );
   }
 }
