@@ -17,7 +17,7 @@ typedef ParticleBuilder = ConfettiParticle Function(int index);
 class Confetti extends StatefulWidget {
   /// The controller of the confetti.
   /// in general, you don't need to provide one.
-  final ConfettiController controller;
+  final ConfettiController? controller;
 
   /// The options used to launch the confetti.
   final ConfettiOptions? options;
@@ -27,7 +27,8 @@ class Confetti extends StatefulWidget {
   /// the default particles are circles and squares.
   final ParticleBuilder particleBuilder;
 
-  final void Function()? onReady;
+  final void Function(ConfettiController controller, ConfettiOptions options)?
+      onReady;
 
   final void Function(ConfettiOptions options)? onLaunch;
 
@@ -41,8 +42,8 @@ class Confetti extends StatefulWidget {
   final Widget? child;
 
   const Confetti({
-    required this.controller,
     super.key,
+    this.controller,
     this.options,
     this.particleBuilder = ConfettiParticle.defaultBuilder,
     this.onReady,
@@ -118,6 +119,8 @@ class _ConfettiState extends State<Confetti>
   List<ParticleGlueBatch> glueBatches = [];
 
   List<Timer> timers = [];
+
+  late ConfettiController controller;
 
   late AnimationController animationController;
   late Size size;
@@ -275,11 +278,14 @@ class _ConfettiState extends State<Confetti>
 
     initAnimation();
 
+    controller = widget.controller ?? ConfettiController();
+
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
         size = (context as Element).size!;
 
-        widget.onReady?.call();
+        widget.onReady?.call(controller, options);
+
         if (widget.instant) {
           launch(null);
         }
@@ -287,7 +293,7 @@ class _ConfettiState extends State<Confetti>
     );
 
     ConfettiLauncher.load(
-      widget.controller,
+      controller,
       ConfettiLauncherConfig(
         onLaunch: launch,
         onKill: kill,
@@ -300,9 +306,12 @@ class _ConfettiState extends State<Confetti>
     super.didUpdateWidget(oldWidget);
 
     if (widget.controller != oldWidget.controller) {
-      ConfettiLauncher.unload(oldWidget.controller);
+      ConfettiLauncher.unload(controller);
+
+      controller = widget.controller ?? ConfettiController();
+
       ConfettiLauncher.load(
-        widget.controller,
+        controller,
         ConfettiLauncherConfig(
           onLaunch: launch,
           onKill: kill,
@@ -317,7 +326,7 @@ class _ConfettiState extends State<Confetti>
 
     kill();
 
-    ConfettiLauncher.unload(widget.controller);
+    ConfettiLauncher.unload(controller);
 
     super.dispose();
   }

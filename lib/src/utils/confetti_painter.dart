@@ -4,7 +4,6 @@ import 'particle_glue_batch.dart';
 
 class ConfettiPainter extends CustomPainter {
   final List<ParticleGlueBatch> glueBatches;
-
   final void Function() onTick;
 
   ConfettiPainter({
