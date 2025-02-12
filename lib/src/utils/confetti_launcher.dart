@@ -1,6 +1,6 @@
-import 'package:flutter_confetti/src/confetti_controller.dart';
-import 'package:flutter_confetti/src/confetti_options.dart';
-import 'package:flutter_confetti/src/utils/confetti_launcher_config.dart';
+import '../confetti_controller.dart';
+import '../confetti_options.dart';
+import 'confetti_launcher_config.dart';
 
 class ConfettiLauncher {
   static final Map<ConfettiController, ConfettiLauncherConfig> _bullets = {};

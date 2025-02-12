@@ -1,15 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_confetti/src/confetti_controller.dart';
-import 'package:flutter_confetti/src/confetti_options.dart';
-import 'package:flutter_confetti/src/confetti_physics.dart';
-import 'package:flutter_confetti/src/utils/particle_glue.dart';
-import 'package:flutter_confetti/src/utils/confetti_launcher.dart';
-import 'package:flutter_confetti/src/utils/confetti_launcher_config.dart';
-import 'package:flutter_confetti/src/utils/confetti_painter.dart';
-import 'package:flutter_confetti/src/utils/particle_glue_batch.dart';
-
+import 'confetti_controller.dart';
+import 'confetti_options.dart';
+import 'confetti_physics.dart';
+import 'utils/particle_glue.dart';
+import 'utils/confetti_launcher.dart';
+import 'utils/confetti_launcher_config.dart';
+import 'utils/confetti_painter.dart';
+import 'utils/particle_glue_batch.dart';
 import 'shapes/particle/confetti_particle.dart';
 
 typedef ParticleBuilder = ConfettiParticle Function(int index);

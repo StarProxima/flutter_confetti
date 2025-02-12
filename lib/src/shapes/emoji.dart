@@ -1,9 +1,10 @@
 import 'dart:math';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
 import 'package:flutter/painting.dart';
-import '../../flutter_confetti.dart';
+
+import '../confetti_physics.dart';
 import 'particle/confetti_particle.dart';
 
 class EmojiParticle implements ConfettiParticle {
