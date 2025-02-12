@@ -41,6 +41,8 @@ class ConfettiPhysics {
   late final _randomDouble = _random.nextDouble();
 
   ConfettiPhysics({
+    required this.x,
+    required this.y,
     required this.wobble,
     required this.wobbleSpeed,
     required this.velocity,
@@ -63,7 +65,11 @@ class ConfettiPhysics {
     required this.opacityTicks,
   }) : initialColor = color;
 
-  factory ConfettiPhysics.fromOptions(ConfettiOptions options) {
+  factory ConfettiPhysics.fromOptions(
+    ConfettiOptions options, {
+    required double x,
+    required double y,
+  }) {
     final radAngle = options.angle * (pi / 180);
     final radSpread = options.spread * (pi / 180);
 
@@ -72,6 +78,8 @@ class ConfettiPhysics {
     final color = options.colors[_random.nextInt(options.colors.length)];
 
     return ConfettiPhysics(
+      x: x,
+      y: y,
       wobble: _random.nextDouble() * 10,
       wobbleSpeed:
           options.wobbleSpeed ?? min(0.11, _random.nextDouble() * 0.1 + 0.05),

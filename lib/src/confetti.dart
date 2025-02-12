@@ -144,9 +144,11 @@ class _ConfettiState extends State<Confetti>
     final glues = <ParticleGlue>[];
 
     for (int i = 0; i < options.particleCount; i++) {
-      final physic = ConfettiPhysics.fromOptions(options)
-        ..x = x
-        ..y = y;
+      final physic = ConfettiPhysics.fromOptions(
+        options,
+        x: x,
+        y: y,
+      );
 
       final glue = ParticleGlue(particle: particleBuilder(i), physics: physic);
 
@@ -166,16 +168,6 @@ class _ConfettiState extends State<Confetti>
       vsync: this,
       duration: const Duration(seconds: 1),
     );
-
-    animationController.addListener(() async {
-      final finished = glueBatches.every((batch) => batch.isFinished);
-
-      if (finished) {
-        animationController.stop();
-
-        widget.onFinished?.call();
-      }
-    });
   }
 
   void playAnimation() {
@@ -267,6 +259,20 @@ class _ConfettiState extends State<Confetti>
     }
   }
 
+  void onTick() {
+    glueBatches.removeWhere((batch) => batch.isFinished);
+
+    for (final batch in glueBatches) {
+      batch.update();
+    }
+
+    if (glueBatches.isEmpty) {
+      animationController.stop();
+
+      widget.onFinished?.call();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -325,13 +331,7 @@ class _ConfettiState extends State<Confetti>
       painter: ConfettiPainter(
         repaint: animationController,
         glueBatches: glueBatches,
-        onTick: () {
-          glueBatches.removeWhere((batch) => batch.isFinished);
-
-          for (final batch in glueBatches) {
-            batch.update();
-          }
-        },
+        onTick: onTick,
       ),
       child: widget.child ?? const SizedBox.expand(),
     );
