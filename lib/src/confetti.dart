@@ -1,15 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+
 import 'confetti_controller.dart';
 import 'confetti_options.dart';
 import 'confetti_physics.dart';
-import 'utils/particle_glue.dart';
+import 'shapes/particle/confetti_particle.dart';
 import 'utils/confetti_launcher.dart';
 import 'utils/confetti_launcher_config.dart';
 import 'utils/confetti_painter.dart';
+import 'utils/particle_glue.dart';
 import 'utils/particle_glue_batch.dart';
-import 'shapes/particle/confetti_particle.dart';
 
 typedef ParticleBuilder = ConfettiParticle Function(int index);
 
