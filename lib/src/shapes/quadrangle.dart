@@ -27,8 +27,6 @@ class QuadrangleParticle implements ConfettiParticle {
     required ConfettiPhysics physics,
     required Canvas canvas,
   }) {
-    canvas.save();
-
     final paint = Paint()..color = physics.color;
 
     final path = Path()
@@ -50,8 +48,9 @@ class QuadrangleParticle implements ConfettiParticle {
       )
       ..close();
 
-    canvas.drawPath(path, paint);
-
-    canvas.restore();
+    canvas
+      ..save()
+      ..drawPath(path, paint)
+      ..restore();
   }
 }

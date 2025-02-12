@@ -23,7 +23,5 @@ class ConfettiPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant ConfettiPainter oldDelegate) {
-    return true;
-  }
+  bool shouldRepaint(covariant ConfettiPainter oldDelegate) => true;
 }

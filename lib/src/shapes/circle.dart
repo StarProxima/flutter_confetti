@@ -10,25 +10,23 @@ class CircleParticle implements ConfettiParticle {
     required ConfettiPhysics physics,
     required Canvas canvas,
   }) {
-    canvas.save();
-
-    canvas.translate(physics.x, physics.y);
-    canvas.rotate(pi / 10 * physics.wobble);
-    canvas.scale(
-      (physics.x2 - physics.x1).abs() * physics.ovalScalar,
-      (physics.y2 - physics.y1).abs() * physics.ovalScalar,
-    );
-
     final paint = Paint()..color = physics.color;
 
-    canvas.drawArc(
-      Rect.fromCircle(center: const Offset(0, 0), radius: 1),
-      0,
-      2 * pi,
-      true,
-      paint,
-    );
-
-    canvas.restore();
+    canvas
+      ..save()
+      ..translate(physics.x, physics.y)
+      ..rotate(pi / 10 * physics.wobble)
+      ..scale(
+        (physics.x2 - physics.x1).abs() * physics.ovalScalar,
+        (physics.y2 - physics.y1).abs() * physics.ovalScalar,
+      )
+      ..drawArc(
+        Rect.fromCircle(center: const Offset(0, 0), radius: 1),
+        0,
+        2 * pi,
+        true,
+        paint,
+      )
+      ..restore();
   }
 }

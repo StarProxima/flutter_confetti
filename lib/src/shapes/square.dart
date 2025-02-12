@@ -9,8 +9,6 @@ class SquareParticle implements ConfettiParticle {
     required ConfettiPhysics physics,
     required Canvas canvas,
   }) {
-    canvas.save();
-
     final path = Path()
       ..moveTo(
         physics.x.floor().toDouble(),
@@ -32,8 +30,9 @@ class SquareParticle implements ConfettiParticle {
 
     final paint = Paint()..color = physics.color;
 
-    canvas.drawPath(path, paint);
-
-    canvas.restore();
+    canvas
+      ..save()
+      ..drawPath(path, paint)
+      ..restore();
   }
 }
