@@ -1,5 +1,5 @@
-import 'package:flutter_confetti/src/confetti_particle.dart';
-import 'package:flutter_confetti/src/confetti_physics.dart';
+import '../../flutter_confetti.dart';
+import '../shapes/particle/confetti_particle.dart';
 
 class ParticleGlue {
   final ConfettiParticle particle;
