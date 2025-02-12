@@ -17,7 +17,7 @@ class ConfettiPainter extends CustomPainter {
     onTick();
 
     for (final batch in batches) {
-      batch.paint(canvas, size);
+      batch.paint(canvas);
     }
   }
 

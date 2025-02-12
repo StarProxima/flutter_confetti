@@ -30,7 +30,7 @@ class Confetti extends StatefulWidget {
   final void Function(ConfettiController controller, ConfettiOptions options)?
       onReady;
 
-  final void Function(ConfettiOptions options)? onLaunch;
+  final void Function(ConfettiOptions options, ParticleBatch batch)? onLaunch;
 
   /// A callback that will be called when the confetti finished its animation.
   final void Function()? onFinished;
@@ -72,7 +72,7 @@ class Confetti extends StatefulWidget {
     void Function(OverlayEntry overlayEntry)? insertInOverlay,
     final void Function(ConfettiController controller, ConfettiOptions options)?
         onReady,
-    final void Function(ConfettiOptions options)? onLaunch,
+    final void Function(ConfettiOptions options, ParticleBatch batch)? onLaunch,
     void Function(OverlayEntry overlayEntry)? onFinished,
   }) {
     OverlayEntry? overlayEntry;
@@ -129,23 +129,23 @@ class _ConfettiState extends State<Confetti>
   ConfettiOptions get options => widget.options ?? const ConfettiOptions();
 
   void addParticles(ConfettiOptions options) {
-    widget.onLaunch?.call(options);
-
     final x = options.x * size.width;
     final y = options.y * size.height;
 
     final particles = <Particle>[];
 
     for (int i = 0; i < options.particleCount; i++) {
-      final physic = ParticlePhysics.fromOptions(
+      final physics = ParticlePhysics.fromOptions(
         options,
         x: x,
         y: y,
       );
 
+      final painter = widget.particleBuilder(i);
+
       final particle = Particle(
-        painter: widget.particleBuilder(i),
-        physics: physic,
+        painter: painter,
+        physics: physics,
       );
 
       particles.add(particle);
@@ -158,12 +158,15 @@ class _ConfettiState extends State<Confetti>
 
     batches.add(batch);
 
+    widget.onLaunch?.call(options, batch);
+
     playAnimation();
   }
 
   void initAnimation() {
     animationController = AnimationController(
       vsync: this,
+      // Duration doesn't matter, we're tied to AnimationController ticks
       duration: const Duration(seconds: 1),
     );
   }
@@ -191,7 +194,6 @@ class _ConfettiState extends State<Confetti>
     addParticles(options);
 
     final launchPeriod = options.launchPeriod;
-
     final launchInterval = options.launchInterval;
     final launchCount = options.launchCount;
 
@@ -217,12 +219,12 @@ class _ConfettiState extends State<Confetti>
   }
 
   void kill() {
-    for (final batch in batches) {
-      batch.kill();
-    }
-
     for (final timer in timers) {
       timer.cancel();
+    }
+
+    for (final batch in batches) {
+      batch.kill();
     }
   }
 

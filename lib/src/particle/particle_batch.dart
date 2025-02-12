@@ -14,7 +14,7 @@ class ParticleBatch {
     required this.tickLeft,
   });
 
-  void paint(Canvas canvas, Size size) {
+  void paint(Canvas canvas) {
     for (final particle in particles) {
       particle.painter.paint(
         physics: particle.physics,
