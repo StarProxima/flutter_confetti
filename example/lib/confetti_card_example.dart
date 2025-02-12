@@ -1,13 +1,9 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'dart:async';
-import 'dart:math';
 
-import 'package:example/code_block.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
-import 'package:syntax_highlight/syntax_highlight.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -238,7 +234,7 @@ class _MainAppState extends State<MainApp> {
                     wobbleSpeed: 0.025,
                     driftSpread: 1,
                     waveIntensity: 0.4,
-                    launchDelay: Duration(milliseconds: 1500),
+                    launchDelay: Duration(milliseconds: 3000),
                     launchInterval: Duration(milliseconds: 2500),
                     launchPeriod: Duration(minutes: 1),
                   ),
@@ -249,7 +245,7 @@ class _MainAppState extends State<MainApp> {
                         y: 0.25,
                         angle: 90,
                         launchCount: 1,
-                        launchDelay: Duration.zero,
+                        launchDelay: Duration(milliseconds: 1500),
                       ),
                     );
                   },
@@ -272,7 +268,7 @@ class _MainAppState extends State<MainApp> {
                     wobbleSpeed: 0.025,
                     driftSpread: 1,
                     waveIntensity: 0.4,
-                    launchDelay: Duration(milliseconds: 3000),
+                    launchDelay: Duration(milliseconds: 4500),
                     launchInterval: Duration(milliseconds: 2500),
                     launchPeriod: Duration(minutes: 1),
                   ),
@@ -283,7 +279,7 @@ class _MainAppState extends State<MainApp> {
                         y: 0.25,
                         angle: 90,
                         launchInterval: Duration(milliseconds: 600),
-                        launchDelay: Duration.zero,
+                        launchDelay: Duration(milliseconds: 1500),
                         launchCount: 3,
                       ),
                     );
