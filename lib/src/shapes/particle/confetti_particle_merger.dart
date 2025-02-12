@@ -2,8 +2,8 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_confetti/flutter_confetti.dart';
 
+import '../../confetti_physics.dart';
 import 'confetti_particle.dart';
 
 class ConfettiParticleMerger implements ConfettiParticle {

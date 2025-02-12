@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import '../../flutter_confetti.dart';
+import '../confetti_physics.dart';
 import 'particle/confetti_particle.dart';
 
 class SquareParticle implements ConfettiParticle {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_confetti/src/utils/particle_glue_batch.dart';
+
+import 'particle_glue_batch.dart';
 
 class ConfettiPainter extends CustomPainter {
   final List<ParticleGlueBatch> glueBatches;
