@@ -10,68 +10,27 @@ const List<Color> defaultColors = [
 ];
 
 class ConfettiOptions {
-  /// The number of confetti to launch.
   final int particleCount;
-
-  /// The angle in which to launch the confetti, in degrees. 90 is straight up.
   final double angle;
-
-  /// How far off center the confetti can go, in degrees.
-  /// 45 means the confetti will launch at the defined angle plus or minus 22.5 degrees.
   final double spread;
-
-  /// How fast the confetti will start going, in pixels.
   final double startVelocity;
-
-  /// How quickly the confetti will lose speed.
-  /// Keep this number between 0 and 1, otherwise the confetti will gain speed.
-  /// Better yet, just never change it.
   final double decay;
-
-  /// How quickly the particles are pulled down.
-  /// 1 is full gravity, 0.5 is half gravity, etc.,
-  /// but there are no limits. You can even make particles go up if you'd like.
   final double gravity;
-
-  /// How much to the side the confetti will drift.
-  /// The default is 0, meaning that they will fall straight down.
-  /// Use a negative number for left and positive number for right.
   final double drift;
-
   final double driftSpread;
-
-  ///  Optionally turns off the tilt and wobble that three dimensional confetti
-  /// would have in the real world.
-  final bool flat;
-
   final double? wobbleSpeed;
-
-  /// How many times the confetti will move.
   final int ticks;
-
   final int opacityTicks;
-
-  /// The x position on the page,
-  /// with 0 being the left edge and 1 being the right edge.
   final double x;
-
-  /// The y position on the page,
-  /// with 0 being the top edge and 1 being the bottom edge.
   final double y;
-
-  /// An array of color strings.
   final List<Color> colors;
-
-  /// Scale factor for each confetti particle.
-  /// Use decimals to make the confetti smaller.
   final double scalar;
-
   final double waveIntensity;
-
   final Duration? launchDelay;
   final Duration? launchPeriod;
   final Duration? launchInterval;
   final int? launchCount;
+  final bool flat;
 
   const ConfettiOptions({
     this.colors = defaultColors,
@@ -98,7 +57,6 @@ class ConfettiOptions {
   })  : assert(decay >= 0),
         assert(ticks > 0);
 
-  /// Create a copy of this object with the given fields replaced with new values.
   ConfettiOptions copyWith({
     int? particleCount,
     double? angle,

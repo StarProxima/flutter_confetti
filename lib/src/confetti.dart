@@ -17,29 +17,13 @@ import 'package:flutter_confetti/src/utils/particle_glue_batch.dart';
 typedef ParticleBuilder = ConfettiParticle Function(int index);
 
 class Confetti extends StatefulWidget {
-  /// The controller of the confetti.
-  /// in general, you don't need to provide one.
   final ConfettiController controller;
-
-  /// The options used to launch the confetti.
   final ConfettiOptions? options;
-
-  /// A builder that creates the particles.
-  /// if you don't provide one, a default one will be used.
-  /// the default particles are circles and squares.
   final ParticleBuilder? particleBuilder;
-
   final void Function()? onReady;
-
   final void Function(ConfettiOptions options)? onLaunch;
-
-  /// A callback that will be called when the confetti finished its animation.
   final void Function()? onFinished;
-
-  /// if true, the confetti will be launched instantly as soon as it is created.
-  /// the default value is false.
   final bool instant;
-
   final Widget? child;
 
   const Confetti({
@@ -57,15 +41,6 @@ class Confetti extends StatefulWidget {
   @override
   State<Confetti> createState() => _ConfettiState();
 
-  /// A quick way to launch the confetti.
-  /// Notice: If your APP is not using the MaterialApp as the root widget,
-  /// you can't use this method. Instead, you should use the Confetti widget directly.
-  /// [context] is the context of the APP.
-  /// [options] is the options used to launch the confetti.
-  /// [particleBuilder] is the builder that creates the particles. if you don't
-  /// provide one, a default one will be used.The default particles are circles and squares..
-  /// [onFinished] is a callback that will be called when the confetti finished its animation.
-  /// [insertInOverlay] is a callback that will be called to insert the confetti into the overlay.
   static ConfettiController launch(
     BuildContext context, {
     required ConfettiOptions options,
