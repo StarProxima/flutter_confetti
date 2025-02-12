@@ -30,8 +30,10 @@ class EmojiParticle implements ConfettiParticle {
           text: emoji, style: textStyle.copyWith(fontSize: scaleFontSize)),
       textDirection: TextDirection.ltr,
     );
-    textPainter.layout();
-    textPainter.paint(canvas, Offset.zero);
+
+    textPainter
+      ..layout()
+      ..paint(canvas, Offset.zero);
 
     final picture = recorder.endRecording();
     final imageSize = (scaleFontSize + 10).toInt();
@@ -51,17 +53,15 @@ class EmojiParticle implements ConfettiParticle {
       return;
     }
 
-    canvas.save();
-
-    canvas.translate(physics.x, physics.y);
-    canvas.rotate(pi / 10 * physics.wobble);
-    canvas.scale(0.25, 0.25);
-
     final paint = Paint()
       ..color = Color.fromRGBO(255, 255, 255, physics.opacity);
 
-    canvas.drawImage(_cachedImage!, Offset.zero, paint);
-
-    canvas.restore();
+    canvas
+      ..save()
+      ..translate(physics.x, physics.y)
+      ..rotate(pi / 10 * physics.wobble)
+      ..scale(0.25, 0.25)
+      ..drawImage(_cachedImage!, Offset.zero, paint)
+      ..restore();
   }
 }

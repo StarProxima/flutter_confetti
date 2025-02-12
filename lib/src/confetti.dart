@@ -40,8 +40,8 @@ class Confetti extends StatefulWidget {
   final Widget? child;
 
   const Confetti({
-    super.key,
     required this.controller,
+    super.key,
     this.options,
     this.particleBuilder = ConfettiParticle.defaultBuilder,
     this.onReady,
@@ -74,9 +74,9 @@ class Confetti extends StatefulWidget {
     final controller = ConfettiController();
 
     overlayEntry = OverlayEntry(
-      builder: (BuildContext ctx) {
-        final height = MediaQuery.of(ctx).size.height;
-        final width = MediaQuery.of(ctx).size.width;
+      builder: (context) {
+        final height = MediaQuery.of(context).size.height;
+        final width = MediaQuery.of(context).size.width;
 
         return Positioned(
           left: width * options.x,
@@ -98,7 +98,6 @@ class Confetti extends StatefulWidget {
           ),
         );
       },
-      opaque: false,
     );
 
     if (insertInOverlay != null) {
@@ -127,8 +126,8 @@ class _ConfettiState extends State<Confetti>
 
     widget.onLaunch?.call(options);
 
-    double x = options.x * size.width;
-    double y = options.y * size.height;
+    final x = options.x * size.width;
+    final y = options.y * size.height;
 
     final glues = <ParticleGlue>[];
 
@@ -175,7 +174,9 @@ class _ConfettiState extends State<Confetti>
     if (delay != null) {
       await Future.delayed(delay);
 
-      if (!context.mounted) return;
+      if (!context.mounted) {
+        return;
+      }
     }
 
     setupTimerForOptions(options);
@@ -203,15 +204,17 @@ class _ConfettiState extends State<Confetti>
       minDuration = durationFromCount;
     }
 
-    if (minDuration != null) await Future.delayed(minDuration);
+    if (minDuration != null) {
+      await Future.delayed(minDuration);
+    }
   }
 
   void kill() {
-    for (var batch in glueBatches) {
+    for (final batch in glueBatches) {
       batch.kill();
     }
 
-    for (var timer in timers) {
+    for (final timer in timers) {
       timer.cancel();
     }
   }
@@ -276,7 +279,9 @@ class _ConfettiState extends State<Confetti>
         size = (context as Element).size!;
 
         widget.onReady?.call();
-        if (widget.instant) launch(null);
+        if (widget.instant) {
+          launch(null);
+        }
       },
     );
 

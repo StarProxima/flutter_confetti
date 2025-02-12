@@ -10,8 +10,6 @@ class StarParticle implements ConfettiParticle {
     required ConfettiPhysics physics,
     required Canvas canvas,
   }) {
-    canvas.save();
-
     final innerRadius = 4 * physics.scalar;
     final outerRadius = 8 * physics.scalar;
     double rot = pi / 2 * 3;
@@ -38,8 +36,9 @@ class StarParticle implements ConfettiParticle {
 
     final paint = Paint()..color = physics.color;
 
-    canvas.drawPath(path, paint);
-
-    canvas.restore();
+    canvas
+      ..save()
+      ..drawPath(path, paint)
+      ..restore();
   }
 }

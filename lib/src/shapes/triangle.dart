@@ -9,8 +9,6 @@ class TriangleParticle implements ConfettiParticle {
     required ConfettiPhysics physics,
     required Canvas canvas,
   }) {
-    canvas.save();
-
     final path = Path()
       ..moveTo(physics.x.floor().toDouble(), physics.y.floor().toDouble())
       ..lineTo(physics.wobbleX.ceil().toDouble(), physics.y1.floor().toDouble())
@@ -19,8 +17,9 @@ class TriangleParticle implements ConfettiParticle {
 
     final paint = Paint()..color = physics.color;
 
-    canvas.drawPath(path, paint);
-
-    canvas.restore();
+    canvas
+      ..save()
+      ..drawPath(path, paint)
+      ..restore();
   }
 }
