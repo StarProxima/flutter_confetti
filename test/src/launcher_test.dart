@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('callback should be called', () {
-    const key = ConfettiController();
+    final key = ConfettiController();
     int counter = 0;
     ConfettiLauncher.load(
         key,
@@ -19,7 +19,7 @@ void main() {
   });
 
   test('callback should not be called after unload', () {
-    const key = ConfettiController();
+    final key = ConfettiController();
     int counter = 0;
 
     ConfettiLauncher.load(

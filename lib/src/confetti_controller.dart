@@ -2,7 +2,7 @@ import 'package:flutter_confetti/src/confetti_options.dart';
 import 'package:flutter_confetti/src/utils/confetti_launcher.dart';
 
 class ConfettiController {
-  const ConfettiController();
+  ConfettiController();
 
   /// launch the confetti
   Future<void> launch([ConfettiOptions? options]) async {

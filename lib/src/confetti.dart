@@ -136,9 +136,6 @@ class _ConfettiState extends State<Confetti>
 
     widget.onLaunch?.call(options);
 
-    final colors = options.colors;
-    final colorsCount = colors.length;
-
     final particleBuilder = widget.particleBuilder ?? defaultParticleBuilder;
 
     double x = options.x * size.width;
@@ -147,8 +144,7 @@ class _ConfettiState extends State<Confetti>
     final glues = <ParticleGlue>[];
 
     for (int i = 0; i < options.particleCount; i++) {
-      final color = colors[i % colorsCount];
-      final physic = ConfettiPhysics.fromOptions(options: options, color: color)
+      final physic = ConfettiPhysics.fromOptions(options)
         ..x = x
         ..y = y;
 

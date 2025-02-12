@@ -8,7 +8,7 @@ void main() {
   int counter = 0;
 
   setUp(() {
-    controller = const ConfettiController();
+    controller = ConfettiController();
 
     ConfettiLauncher.load(
         controller,

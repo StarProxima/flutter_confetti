@@ -32,6 +32,7 @@ class ConfettiPhysics {
   double y1 = 0;
   double y2 = 0;
 
+  final Color initialColor;
   final int totalTicks;
   final int opacityTicks;
 
@@ -60,14 +61,15 @@ class ConfettiPhysics {
     required this.tiltCos,
     required this.totalTicks,
     required this.opacityTicks,
-  });
+  }) : initialColor = color;
 
-  factory ConfettiPhysics.fromOptions(
-      {required ConfettiOptions options, required Color color}) {
+  factory ConfettiPhysics.fromOptions(ConfettiOptions options) {
     final radAngle = options.angle * (pi / 180);
     final radSpread = options.spread * (pi / 180);
 
     final driftSpread = options.driftSpread;
+
+    final color = options.colors[_random.nextInt(options.colors.length)];
 
     return ConfettiPhysics(
       wobble: _random.nextDouble() * 10,
@@ -101,7 +103,7 @@ class ConfettiPhysics {
   void update(int tickLeft) {
     if (tickLeft < opacityTicks) {
       opacity = tickLeft / opacityTicks;
-      color = color.withOpacity(opacity);
+      color = color.withOpacity(opacity * initialColor.opacity);
     }
 
     final wave = waveIntensity != 0
