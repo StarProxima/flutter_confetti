@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 
 import 'confetti_options.dart';
 
-class ConfettiPhysics {
+class ConfettiParticlePhysics {
+  Color color;
   double wobble;
   double wobbleSpeed;
   double velocity;
   double angle2D;
   double tiltAngle;
-  Color color;
   double decay;
   double drift;
   double gravity;
@@ -41,7 +41,7 @@ class ConfettiPhysics {
 
   late final _randomDouble = _random.nextDouble();
 
-  ConfettiPhysics({
+  ConfettiParticlePhysics({
     required this.x,
     required this.y,
     required this.wobble,
@@ -66,7 +66,7 @@ class ConfettiPhysics {
     required this.opacityTicks,
   }) : initialColor = color;
 
-  factory ConfettiPhysics.fromOptions(
+  factory ConfettiParticlePhysics.fromOptions(
     ConfettiOptions options, {
     required double x,
     required double y,
@@ -78,7 +78,8 @@ class ConfettiPhysics {
 
     final color = options.colors[_random.nextInt(options.colors.length)];
 
-    return ConfettiPhysics(
+    return ConfettiParticlePhysics(
+      color: color,
       x: x,
       y: y,
       wobble: _random.nextDouble() * 10,
@@ -88,7 +89,6 @@ class ConfettiPhysics {
           _random.nextDouble() * options.startVelocity,
       angle2D: -radAngle + (0.5 * radSpread - _random.nextDouble() * radSpread),
       tiltAngle: (_random.nextDouble() * (0.75 - 0.25) + 0.25) * pi,
-      color: color,
       decay: options.decay,
       drift: options.drift +
           (driftSpread != 0

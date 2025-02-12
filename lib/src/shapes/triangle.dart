@@ -1,13 +1,13 @@
 import 'dart:ui';
 
 import '../confetti_physics.dart';
-import 'particle/confetti_particle.dart';
+import 'particle/confetti_particle_painter.dart';
 
-class TriangleParticle implements ConfettiParticle {
+class TriangleParticle implements ConfettiParticlePainter {
   @override
   void paint({
-    required ConfettiPhysics physics,
     required Canvas canvas,
+    required ConfettiParticlePhysics physics,
   }) {
     final path = Path()
       ..moveTo(physics.x.floor().toDouble(), physics.y.floor().toDouble())

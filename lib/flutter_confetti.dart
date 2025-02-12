@@ -8,8 +8,8 @@ export 'src/confetti_physics.dart';
 export 'src/confetti.dart';
 
 /// shapes
-export 'src/shapes/particle/confetti_particle.dart';
-export 'src/shapes/particle/confetti_particle_merger.dart';
+export 'src/shapes/particle/confetti_particle_painter.dart';
+export 'src/shapes/particle/confetti_particle_painter_merger.dart';
 export 'src/shapes/star.dart';
 export 'src/shapes/circle.dart';
 export 'src/shapes/square.dart';

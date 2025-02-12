@@ -1,30 +1,30 @@
 import 'dart:ui';
 
-import 'particle_glue.dart';
+import 'confetti_particle.dart';
 
-class ParticleGlueBatch {
-  final List<ParticleGlue> glues;
+class ConfettiParticleBatch {
+  final List<ConfettiParticle> particles;
 
   int tickLeft;
 
   bool get isFinished => tickLeft <= 0;
 
-  ParticleGlueBatch({
-    required this.glues,
+  ConfettiParticleBatch({
+    required this.particles,
     required this.tickLeft,
   });
 
   void update() {
     tickLeft--;
 
-    for (final glue in glues) {
+    for (final glue in particles) {
       glue.physics.update(tickLeft);
     }
   }
 
   void paint(Canvas canvas, Size size) {
-    for (final glue in glues) {
-      glue.particle.paint(
+    for (final glue in particles) {
+      glue.painter.paint(
         physics: glue.physics,
         canvas: canvas,
       );

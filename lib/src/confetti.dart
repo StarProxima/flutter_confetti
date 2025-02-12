@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'confetti_controller.dart';
 import 'confetti_options.dart';
 import 'confetti_physics.dart';
-import 'shapes/particle/confetti_particle.dart';
+import 'shapes/particle/confetti_particle_painter.dart';
 import 'utils/confetti_launcher.dart';
 import 'utils/confetti_launcher_config.dart';
 import 'utils/confetti_painter.dart';
-import 'utils/particle_glue.dart';
-import 'utils/particle_glue_batch.dart';
+import 'utils/confetti_particle.dart';
+import 'utils/confetti_particle_batch.dart';
 
-typedef ParticleBuilder = ConfettiParticle Function(int index);
+typedef ParticleBuilder = ConfettiParticlePainter Function(int index);
 
 class Confetti extends StatefulWidget {
   /// The controller of the confetti.
@@ -45,7 +45,7 @@ class Confetti extends StatefulWidget {
     super.key,
     this.controller,
     this.options,
-    this.particleBuilder = ConfettiParticle.defaultBuilder,
+    this.particleBuilder = ConfettiParticlePainter.defaultBuilder,
     this.onReady,
     this.onLaunch,
     this.onFinished,
@@ -68,7 +68,7 @@ class Confetti extends StatefulWidget {
   static ConfettiController launch(
     BuildContext context, {
     required ConfettiOptions options,
-    ParticleBuilder particleBuilder = ConfettiParticle.defaultBuilder,
+    ParticleBuilder particleBuilder = ConfettiParticlePainter.defaultBuilder,
     void Function(OverlayEntry overlayEntry)? insertInOverlay,
     void Function(OverlayEntry overlayEntry)? onFinished,
   }) {
@@ -116,7 +116,7 @@ class _ConfettiState extends State<Confetti>
     with SingleTickerProviderStateMixin {
   ConfettiOptions get options => widget.options ?? const ConfettiOptions();
 
-  List<ParticleGlueBatch> glueBatches = [];
+  List<ConfettiParticleBatch> batches = [];
 
   List<Timer> timers = [];
 
@@ -133,29 +133,29 @@ class _ConfettiState extends State<Confetti>
     final x = options.x * size.width;
     final y = options.y * size.height;
 
-    final glues = <ParticleGlue>[];
+    final particles = <ConfettiParticle>[];
 
     for (int i = 0; i < options.particleCount; i++) {
-      final physic = ConfettiPhysics.fromOptions(
+      final physic = ConfettiParticlePhysics.fromOptions(
         options,
         x: x,
         y: y,
       );
 
-      final glue = ParticleGlue(
-        particle: widget.particleBuilder(i),
+      final particle = ConfettiParticle(
+        painter: widget.particleBuilder(i),
         physics: physic,
       );
 
-      glues.add(glue);
+      particles.add(particle);
     }
 
-    final batch = ParticleGlueBatch(
-      glues: glues,
+    final batch = ConfettiParticleBatch(
+      particles: particles,
       tickLeft: options.ticks,
     );
 
-    glueBatches.add(batch);
+    batches.add(batch);
   }
 
   void initAnimation() {
@@ -214,7 +214,7 @@ class _ConfettiState extends State<Confetti>
   }
 
   void kill() {
-    for (final batch in glueBatches) {
+    for (final batch in batches) {
       batch.kill();
     }
 
@@ -259,13 +259,13 @@ class _ConfettiState extends State<Confetti>
   }
 
   void onTick() {
-    glueBatches.removeWhere((batch) => batch.isFinished);
+    batches.removeWhere((batch) => batch.isFinished);
 
-    for (final batch in glueBatches) {
+    for (final batch in batches) {
       batch.update();
     }
 
-    if (glueBatches.isEmpty) {
+    if (batches.isEmpty) {
       animationController.stop();
 
       widget.onFinished?.call();
@@ -337,7 +337,7 @@ class _ConfettiState extends State<Confetti>
       willChange: true,
       painter: ConfettiPainter(
         repaint: animationController,
-        glueBatches: glueBatches,
+        batches: batches,
         onTick: onTick,
       ),
       child: widget.child ?? const SizedBox.expand(),

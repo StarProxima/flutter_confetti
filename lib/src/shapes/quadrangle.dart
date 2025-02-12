@@ -2,9 +2,9 @@ import 'dart:math';
 import 'dart:ui';
 
 import '../confetti_physics.dart';
-import 'particle/confetti_particle.dart';
+import 'particle/confetti_particle_painter.dart';
 
-class QuadrangleParticle implements ConfettiParticle {
+class QuadrangleParticle implements ConfettiParticlePainter {
   final double distortionX;
   final double distortionY;
   static final _random = Random();
@@ -24,8 +24,8 @@ class QuadrangleParticle implements ConfettiParticle {
 
   @override
   void paint({
-    required ConfettiPhysics physics,
     required Canvas canvas,
+    required ConfettiParticlePhysics physics,
   }) {
     final paint = Paint()..color = physics.color;
 

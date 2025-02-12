@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
 import '../confetti_physics.dart';
-import 'particle/confetti_particle.dart';
+import 'particle/confetti_particle_painter.dart';
 
-class EmojiParticle implements ConfettiParticle {
+class EmojiParticle implements ConfettiParticlePainter {
   final String emoji;
   final TextStyle? textStyle;
 
@@ -27,7 +27,9 @@ class EmojiParticle implements ConfettiParticle {
 
     final textPainter = TextPainter(
       text: TextSpan(
-          text: emoji, style: textStyle.copyWith(fontSize: scaleFontSize)),
+        text: emoji,
+        style: textStyle.copyWith(fontSize: scaleFontSize),
+      ),
       textDirection: TextDirection.ltr,
     );
 
@@ -43,8 +45,8 @@ class EmojiParticle implements ConfettiParticle {
 
   @override
   void paint({
-    required ConfettiPhysics physics,
     required Canvas canvas,
+    required ConfettiParticlePhysics physics,
   }) {
     if (_cachedImage == null) {
       _createTextImage().then((image) {
