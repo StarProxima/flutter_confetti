@@ -6,11 +6,11 @@ import 'package:flutter/painting.dart';
 import 'package:flutter_confetti/src/confetti_particle.dart';
 import 'package:flutter_confetti/src/confetti_physics.dart';
 
-class Emoji implements ConfettiParticle {
+class EmojiParticle implements ConfettiParticle {
   final String emoji;
   final TextStyle? textStyle;
 
-  Emoji({
+  EmojiParticle({
     required this.emoji,
     this.textStyle,
   });

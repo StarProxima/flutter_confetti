@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter_confetti/src/confetti_particle.dart';
 import 'package:flutter_confetti/src/confetti_physics.dart';
 
-class Quadrangle implements ConfettiParticle {
+class QuadrangleParticle implements ConfettiParticle {
   final double distortionX;
   final double distortionY;
   static final _random = Random();
@@ -20,7 +20,7 @@ class Quadrangle implements ConfettiParticle {
   late final double dx4 = _r * distortionX;
   late final double dy4 = _r * distortionY;
 
-  Quadrangle({this.distortionX = 2.0, this.distortionY = 2.0});
+  QuadrangleParticle({this.distortionX = 2.0, this.distortionY = 2.0});
 
   @override
   void paint({

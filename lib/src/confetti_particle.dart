@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_confetti/src/confetti_physics.dart';
 
 abstract class ConfettiParticle {
@@ -13,6 +14,10 @@ abstract class ConfettiParticle {
   factory ConfettiParticle.merge(
     List<ConfettiParticle> particles,
   ) = ConfettiParticleMerger;
+
+  factory ConfettiParticle.defaultBuilder(int _) => ConfettiParticleMerger(
+        [CircleParticle(), SquareParticle()],
+      );
 }
 
 class ConfettiParticleMerger implements ConfettiParticle {

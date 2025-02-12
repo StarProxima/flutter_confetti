@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter_confetti/src/confetti_particle.dart';
 import 'package:flutter_confetti/src/confetti_physics.dart';
 
-class Star implements ConfettiParticle {
+class StarParticle implements ConfettiParticle {
   @override
   void paint({
     required ConfettiPhysics physics,

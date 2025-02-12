@@ -384,7 +384,7 @@ class __ConfettiCardState extends State<_ConfettiCard> {
                         // onReady: () => widget.onReady?.call(
                         //     controller, widget.options ?? ConfettiOptions()),
                         particleBuilder: (_) => ConfettiParticle.merge([
-                          Quadrangle(
+                          QuadrangleParticle(
                             distortionX: 1,
                             distortionY: 1,
                           ),

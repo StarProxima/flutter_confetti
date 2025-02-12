@@ -167,13 +167,13 @@ class _MainAppState extends State<MainApp> {
                       Confetti.launch(context,
                           options:
                               options.copyWith(particleCount: 40, scalar: 1.2),
-                          particleBuilder: (index) => Star());
+                          particleBuilder: (index) => StarParticle());
                       Confetti.launch(context,
                           options: options.copyWith(
                             particleCount: 10,
                             scalar: 0.75,
                           ),
-                          particleBuilder: (index) => Star());
+                          particleBuilder: (index) => StarParticle());
                     }
 
                     Timer(Duration.zero, shoot);
@@ -204,14 +204,14 @@ class _MainAppState extends State<MainApp> {
                           options: options.copyWith(
                             particleCount: 40,
                           ),
-                          particleBuilder: (index) => Emoji(
+                          particleBuilder: (index) => EmojiParticle(
                               emoji: '🍄',
                               textStyle: GoogleFonts.notoColorEmoji()));
                       Confetti.launch(context,
                           options: options.copyWith(
                             particleCount: 10,
                           ),
-                          particleBuilder: (index) => Emoji(
+                          particleBuilder: (index) => EmojiParticle(
                                 emoji: '️⚽',
                                 textStyle: GoogleFonts.notoColorEmoji(),
                               ));
