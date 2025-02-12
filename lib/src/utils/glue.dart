@@ -5,5 +5,8 @@ class Glue {
   final ConfettiParticle particle;
   final ConfettiPhysics physics;
 
-  const Glue({required this.particle, required this.physics});
+  const Glue({
+    required this.particle,
+    required this.physics,
+  });
 }

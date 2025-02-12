@@ -38,12 +38,18 @@ class ConfettiOptions {
   /// Use a negative number for left and positive number for right.
   final double drift;
 
+  final double driftSpread;
+
   ///  Optionally turns off the tilt and wobble that three dimensional confetti
   /// would have in the real world.
   final bool flat;
 
+  final double? wobbleSpeed;
+
   /// How many times the confetti will move.
   final int ticks;
+
+  final int opacityTicks;
 
   /// The x position on the page,
   /// with 0 being the left edge and 1 being the right edge.
@@ -60,21 +66,36 @@ class ConfettiOptions {
   /// Use decimals to make the confetti smaller.
   final double scalar;
 
-  const ConfettiOptions(
-      {this.colors = defaultColors,
-      this.particleCount = 50,
-      this.angle = 90,
-      this.spread = 45,
-      this.startVelocity = 45,
-      this.decay = 0.9,
-      this.gravity = 1,
-      this.drift = 0,
-      this.flat = false,
-      this.scalar = 1,
-      this.x = 0.5,
-      this.y = 0.5,
-      this.ticks = 200})
-      : assert(decay >= 0 && decay <= 1),
+  final double waveIntensity;
+
+  final Duration? launchDelay;
+  final Duration? launchPeriod;
+  final Duration? launchInterval;
+  final int? launchCount;
+
+  const ConfettiOptions({
+    this.colors = defaultColors,
+    this.particleCount = 50,
+    this.angle = 90,
+    this.spread = 45,
+    this.startVelocity = 45,
+    this.decay = 0.9,
+    this.gravity = 1,
+    this.drift = 0,
+    this.driftSpread = 0,
+    this.flat = false,
+    this.wobbleSpeed,
+    this.scalar = 1,
+    this.x = 0.5,
+    this.y = 0.5,
+    this.ticks = 200,
+    this.opacityTicks = 75,
+    this.waveIntensity = 0,
+    this.launchDelay,
+    this.launchPeriod,
+    this.launchInterval,
+    this.launchCount,
+  })  : assert(decay >= 0),
         assert(ticks > 0);
 
   /// Create a copy of this object with the given fields replaced with new values.
@@ -91,7 +112,15 @@ class ConfettiOptions {
     double? x,
     double? y,
     int? ticks,
+    double? driftSpread,
+    double? wobbleSpeed,
+    int? opacityTicks,
+    double? waveIntensity,
     List<Color>? colors,
+    Duration? launchDelay,
+    Duration? launchPeriod,
+    Duration? launchInterval,
+    int? launchCount,
   }) {
     return ConfettiOptions(
       particleCount: particleCount ?? this.particleCount,
@@ -106,7 +135,15 @@ class ConfettiOptions {
       x: x ?? this.x,
       y: y ?? this.y,
       ticks: ticks ?? this.ticks,
+      driftSpread: drift ?? this.driftSpread,
+      wobbleSpeed: wobbleSpeed ?? this.wobbleSpeed,
+      waveIntensity: waveIntensity ?? this.waveIntensity,
+      opacityTicks: opacityTicks ?? this.opacityTicks,
       colors: colors ?? this.colors,
+      launchDelay: launchDelay ?? this.launchDelay,
+      launchPeriod: launchPeriod ?? this.launchPeriod,
+      launchInterval: launchInterval ?? this.launchInterval,
+      launchCount: launchCount ?? this.launchCount,
     );
   }
 }

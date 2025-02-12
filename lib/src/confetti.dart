@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -15,6 +16,10 @@ import 'package:flutter_confetti/src/shapes/circle.dart';
 typedef ParticleBuilder = ConfettiParticle Function(int index);
 
 class Confetti extends StatefulWidget {
+  /// The controller of the confetti.
+  /// in general, you don't need to provide one.
+  final ConfettiController controller;
+
   /// The options used to launch the confetti.
   final ConfettiOptions? options;
 
@@ -23,24 +28,30 @@ class Confetti extends StatefulWidget {
   /// the default particles are circles and squares.
   final ParticleBuilder? particleBuilder;
 
-  /// The controller of the confetti.
-  /// in general, you don't need to provide one.
-  final ConfettiController controller;
+  final void Function()? onReady;
+
+  final void Function(ConfettiOptions options)? onLaunch;
 
   /// A callback that will be called when the confetti finished its animation.
-  final Function()? onFinished;
+  final void Function()? onFinished;
 
   /// if true, the confetti will be launched instantly as soon as it is created.
   /// the default value is false.
   final bool instant;
 
-  const Confetti(
-      {super.key,
-      this.options,
-      this.particleBuilder,
-      required this.controller,
-      this.onFinished,
-      this.instant = false});
+  final Widget? child;
+
+  const Confetti({
+    super.key,
+    required this.controller,
+    this.options,
+    this.particleBuilder,
+    this.onReady,
+    this.onLaunch,
+    this.onFinished,
+    this.instant = false,
+    this.child,
+  });
 
   @override
   State<Confetti> createState() => _ConfettiState();
@@ -103,28 +114,32 @@ class Confetti extends StatefulWidget {
 
 class _ConfettiState extends State<Confetti>
     with SingleTickerProviderStateMixin {
-  ConfettiOptions get options {
-    return widget.options ?? const ConfettiOptions();
-  }
+  ConfettiOptions get options => widget.options ?? const ConfettiOptions();
 
   List<Glue> glueList = [];
 
+  List<Timer> timers = [];
+
   late AnimationController animationController;
-
   late double containerWidth;
-  late double containerHeight;
+  // late double containerHeight;
 
-  randomInt(int min, int max) {
+  int randomInt(int min, int max) {
     return Random().nextInt(max - min) + min;
   }
 
-  addParticles() {
+  ConfettiParticle defaultParticleBuilder(int index) =>
+      [Circle(), Square()][randomInt(0, 2)];
+
+  void addParticles(ConfettiOptions options) {
+    playAnimation();
+
+    widget.onLaunch?.call(options);
+
     final colors = options.colors;
     final colorsCount = colors.length;
 
-    final particleBuilder = widget.particleBuilder != null
-        ? widget.particleBuilder!
-        : (int index) => [Circle(), Square()][randomInt(0, 2)];
+    final particleBuilder = widget.particleBuilder ?? defaultParticleBuilder;
 
     double x = options.x * containerWidth;
     double y = options.y * containerHeight;
@@ -141,37 +156,109 @@ class _ConfettiState extends State<Confetti>
     }
   }
 
-  initAnimation() {
-    animationController =
-        AnimationController(vsync: this, duration: const Duration(seconds: 1));
+  void initAnimation() {
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    );
 
-    animationController.addListener(() {
-      final finished = !glueList.any((element) => !element.physics.finished);
+    animationController.addListener(() async {
+      final finished = glueList.every((element) => element.physics.isFinished);
 
       if (finished) {
         animationController.stop();
 
-        if (widget.onFinished != null) {
-          widget.onFinished!();
-        }
+        widget.onFinished?.call();
       }
     });
   }
 
-  playAnimation() {
-    if (animationController.isAnimating == false) {
+  void playAnimation() {
+    if (!animationController.isAnimating) {
       animationController.repeat();
     }
   }
 
-  launch() {
-    addParticles();
-    playAnimation();
+  Future<void> launch(ConfettiOptions? confettiOptions) async {
+    final options = confettiOptions ?? this.options;
+
+    final delay = options.launchDelay;
+    if (delay != null) {
+      await Future.delayed(delay);
+
+      if (!context.mounted) return;
+    }
+
+    setupTimerForOptions(options);
+
+    addParticles(options);
+
+    final launchPeriod = options.launchPeriod;
+
+    final launchInterval = options.launchInterval;
+    final launchCount = options.launchCount;
+
+    final durationFromCount = launchInterval != null && launchCount != null
+        ? Duration(milliseconds: launchInterval.inMilliseconds * launchCount)
+        : null;
+
+    final Duration? minDuration;
+
+    if (launchPeriod == null) {
+      minDuration = durationFromCount;
+    } else if (durationFromCount == null) {
+      minDuration = launchPeriod;
+    } else if (launchPeriod < durationFromCount) {
+      minDuration = launchPeriod;
+    } else {
+      minDuration = durationFromCount;
+    }
+
+    if (minDuration != null) await Future.delayed(minDuration);
   }
 
-  kill() {
+  void kill() {
     for (var glue in glueList) {
       glue.physics.kill();
+    }
+
+    for (var timer in timers) {
+      timer.cancel();
+    }
+  }
+
+  void setupTimerForOptions(ConfettiOptions options) {
+    final interval = options.launchInterval;
+
+    if (interval != null) {
+      final timer = Timer.periodic(
+        interval,
+        (timer) {
+          final launchPeriod = options.launchPeriod;
+          if (launchPeriod != null) {
+            final timerDuration = Duration(
+              milliseconds: interval.inMilliseconds * timer.tick,
+            );
+
+            if (timerDuration >= launchPeriod) {
+              timer.cancel();
+              return;
+            }
+          }
+
+          final launchCount = options.launchCount;
+          if (launchCount != null) {
+            if (timer.tick >= launchCount) {
+              timer.cancel();
+              return;
+            }
+          }
+
+          addParticles(options);
+        },
+      );
+
+      timers.add(timer);
     }
   }
 
@@ -181,16 +268,20 @@ class _ConfettiState extends State<Confetti>
 
     initAnimation();
 
-    if (widget.instant) {
-      WidgetsBinding.instance.addPostFrameCallback(
-        (_) {
-          launch();
-        },
-      );
-    }
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        widget.onReady?.call();
+        if (widget.instant) launch(null);
+      },
+    );
 
-    Launcher.load(
-        widget.controller, LauncherConfig(onLaunch: launch, onKill: kill));
+    ConfettiLauncher.load(
+      widget.controller,
+      LauncherConfig(
+        onLaunch: launch,
+        onKill: kill,
+      ),
+    );
   }
 
   @override
@@ -198,9 +289,14 @@ class _ConfettiState extends State<Confetti>
     super.didUpdateWidget(oldWidget);
 
     if (widget.controller != oldWidget.controller) {
-      Launcher.unload(oldWidget.controller);
-      Launcher.load(
-          widget.controller, LauncherConfig(onLaunch: launch, onKill: kill));
+      ConfettiLauncher.unload(oldWidget.controller);
+      ConfettiLauncher.load(
+        widget.controller,
+        LauncherConfig(
+          onLaunch: launch,
+          onKill: kill,
+        ),
+      );
     }
   }
 
@@ -208,7 +304,9 @@ class _ConfettiState extends State<Confetti>
   void dispose() {
     animationController.dispose();
 
-    Launcher.unload(widget.controller);
+    kill();
+
+    ConfettiLauncher.unload(widget.controller);
 
     super.dispose();
   }
@@ -217,13 +315,15 @@ class _ConfettiState extends State<Confetti>
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       containerWidth = constraints.maxWidth;
-      containerHeight = constraints.maxHeight;
+      // containerHeight = constraints.maxHeight;
 
       return CustomPaint(
         willChange: true,
         painter: Painter(
-            glueList: glueList, animationController: animationController),
-        child: const SizedBox.expand(),
+          glueList: glueList,
+          listenable: animationController,
+        ),
+        child: widget.child ?? const SizedBox.expand(),
       );
     });
   }

@@ -6,7 +6,7 @@ import 'package:flutter/painting.dart';
 import 'package:flutter_confetti/src/confetti_particle.dart';
 import 'package:flutter_confetti/src/confetti_physics.dart';
 
-class Emoji extends ConfettiParticle {
+class Emoji implements ConfettiParticle {
   final String emoji;
   final TextStyle? textStyle;
 
@@ -57,7 +57,7 @@ class Emoji extends ConfettiParticle {
     canvas.scale(0.25, 0.25);
 
     final paint = Paint()
-      ..color = Color.fromRGBO(255, 255, 255, 1 - physics.progress);
+      ..color = Color.fromRGBO(255, 255, 255, physics.opacity);
 
     canvas.drawImage(_cachedImage!, Offset.zero, paint);
 

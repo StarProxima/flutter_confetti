@@ -1,13 +1,16 @@
+import 'package:flutter_confetti/src/confetti_options.dart';
 import 'package:flutter_confetti/src/utils/launcher.dart';
 
 class ConfettiController {
+  const ConfettiController();
+
   /// launch the confetti
-  launch() {
-    Launcher.launch(this);
+  Future<void> launch([ConfettiOptions? options]) async {
+    await ConfettiLauncher.launch(this, options);
   }
 
   /// kill the confetti
-  kill() {
-    Launcher.kill(this);
+  void kill() {
+    ConfettiLauncher.kill(this);
   }
 }
