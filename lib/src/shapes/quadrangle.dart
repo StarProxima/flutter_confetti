@@ -1,10 +1,10 @@
 import 'dart:math';
 import 'dart:ui';
 
-import '../confetti_physics.dart';
-import 'particle/confetti_particle_painter.dart';
+import '../particle/particle_physics.dart';
+import 'painter/particle_painter.dart';
 
-class QuadrangleParticle implements ConfettiParticlePainter {
+class QuadrangleParticle implements ParticlePainter {
   final double distortionX;
   final double distortionY;
   static final _random = Random();
@@ -20,12 +20,15 @@ class QuadrangleParticle implements ConfettiParticlePainter {
   late final double dx4 = _r * distortionX;
   late final double dy4 = _r * distortionY;
 
-  QuadrangleParticle({this.distortionX = 2.0, this.distortionY = 2.0});
+  QuadrangleParticle({
+    this.distortionX = 2.0,
+    this.distortionY = 2.0,
+  });
 
   @override
   void paint({
     required Canvas canvas,
-    required ConfettiParticlePhysics physics,
+    required ParticlePhysics physics,
   }) {
     final paint = Paint()..color = physics.color;
 

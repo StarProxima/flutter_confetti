@@ -4,10 +4,10 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
-import '../confetti_physics.dart';
-import 'particle/confetti_particle_painter.dart';
+import '../particle/particle_physics.dart';
+import 'painter/particle_painter.dart';
 
-class EmojiParticle implements ConfettiParticlePainter {
+class EmojiParticle implements ParticlePainter {
   final String emoji;
   final TextStyle? textStyle;
 
@@ -46,7 +46,7 @@ class EmojiParticle implements ConfettiParticlePainter {
   @override
   void paint({
     required Canvas canvas,
-    required ConfettiParticlePhysics physics,
+    required ParticlePhysics physics,
   }) {
     if (_cachedImage == null) {
       _createTextImage().then((image) {

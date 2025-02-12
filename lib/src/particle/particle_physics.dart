@@ -3,9 +3,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import 'confetti_options.dart';
+import '../utils/confetti_options.dart';
 
-class ConfettiParticlePhysics {
+class ParticlePhysics {
   Color color;
   double wobble;
   double wobbleSpeed;
@@ -41,7 +41,7 @@ class ConfettiParticlePhysics {
 
   late final _randomDouble = _random.nextDouble();
 
-  ConfettiParticlePhysics({
+  ParticlePhysics({
     required this.x,
     required this.y,
     required this.wobble,
@@ -66,7 +66,7 @@ class ConfettiParticlePhysics {
     required this.opacityTicks,
   }) : initialColor = color;
 
-  factory ConfettiParticlePhysics.fromOptions(
+  factory ParticlePhysics.fromOptions(
     ConfettiOptions options, {
     required double x,
     required double y,
@@ -78,7 +78,7 @@ class ConfettiParticlePhysics {
 
     final color = options.colors[_random.nextInt(options.colors.length)];
 
-    return ConfettiParticlePhysics(
+    return ParticlePhysics(
       color: color,
       x: x,
       y: y,

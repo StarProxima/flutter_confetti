@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'confetti_particle_batch.dart';
+import '../particle/particle_batch.dart';
 
 class ConfettiPainter extends CustomPainter {
-  final List<ConfettiParticleBatch> batches;
+  final List<ParticleBatch> batches;
   final void Function() onTick;
 
   ConfettiPainter({

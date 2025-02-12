@@ -1,5 +1,5 @@
-import '../confetti_controller.dart';
-import '../confetti_options.dart';
+import 'confetti_controller.dart';
+import 'confetti_options.dart';
 import 'confetti_launcher_config.dart';
 
 class ConfettiLauncher {

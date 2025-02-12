@@ -1,14 +1,14 @@
 import 'dart:math';
 import 'dart:ui';
 
-import '../confetti_physics.dart';
-import 'particle/confetti_particle_painter.dart';
+import '../particle/particle_physics.dart';
+import 'painter/particle_painter.dart';
 
-class StarParticle implements ConfettiParticlePainter {
+class StarParticle implements ParticlePainter {
   @override
   void paint({
     required Canvas canvas,
-    required ConfettiParticlePhysics physics,
+    required ParticlePhysics physics,
   }) {
     final innerRadius = 4 * physics.scalar;
     final outerRadius = 8 * physics.scalar;

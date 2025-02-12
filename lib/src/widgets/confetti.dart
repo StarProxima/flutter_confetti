@@ -2,17 +2,17 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'confetti_controller.dart';
-import 'confetti_options.dart';
-import 'confetti_physics.dart';
-import 'shapes/particle/confetti_particle_painter.dart';
-import 'utils/confetti_launcher.dart';
-import 'utils/confetti_launcher_config.dart';
-import 'utils/confetti_painter.dart';
-import 'utils/confetti_particle.dart';
-import 'utils/confetti_particle_batch.dart';
+import '../utils/confetti_controller.dart';
+import '../utils/confetti_options.dart';
+import '../particle/particle_physics.dart';
+import '../shapes/painter/particle_painter.dart';
+import '../utils/confetti_launcher.dart';
+import '../utils/confetti_launcher_config.dart';
+import '../utils/confetti_painter.dart';
+import '../particle/particle.dart';
+import '../particle/particle_batch.dart';
 
-typedef ParticleBuilder = ConfettiParticlePainter Function(int index);
+typedef ParticleBuilder = ParticlePainter Function(int index);
 
 class Confetti extends StatefulWidget {
   /// The controller of the confetti.
@@ -45,7 +45,7 @@ class Confetti extends StatefulWidget {
     super.key,
     this.controller,
     this.options,
-    this.particleBuilder = ConfettiParticlePainter.defaultBuilder,
+    this.particleBuilder = ParticlePainter.defaultBuilder,
     this.onReady,
     this.onLaunch,
     this.onFinished,
@@ -68,8 +68,11 @@ class Confetti extends StatefulWidget {
   static ConfettiController launch(
     BuildContext context, {
     required ConfettiOptions options,
-    ParticleBuilder particleBuilder = ConfettiParticlePainter.defaultBuilder,
+    ParticleBuilder particleBuilder = ParticlePainter.defaultBuilder,
     void Function(OverlayEntry overlayEntry)? insertInOverlay,
+    final void Function(ConfettiController controller, ConfettiOptions options)?
+        onReady,
+    final void Function(ConfettiOptions options)? onLaunch,
     void Function(OverlayEntry overlayEntry)? onFinished,
   }) {
     OverlayEntry? overlayEntry;
@@ -87,8 +90,11 @@ class Confetti extends StatefulWidget {
           height: 2,
           child: Confetti(
             controller: controller,
-            options: options.copyWith(x: 0.5, y: 0.5),
             particleBuilder: particleBuilder,
+            options: options.copyWith(x: 0.5, y: 0.5),
+            instant: true,
+            onReady: onReady,
+            onLaunch: onLaunch,
             onFinished: () {
               if (onFinished != null) {
                 onFinished(overlayEntry!);
@@ -96,7 +102,6 @@ class Confetti extends StatefulWidget {
                 overlayEntry?.remove();
               }
             },
-            instant: true,
           ),
         );
       },
@@ -114,35 +119,31 @@ class Confetti extends StatefulWidget {
 
 class _ConfettiState extends State<Confetti>
     with SingleTickerProviderStateMixin {
-  ConfettiOptions get options => widget.options ?? const ConfettiOptions();
-
-  List<ConfettiParticleBatch> batches = [];
-
+  List<ParticleBatch> batches = [];
   List<Timer> timers = [];
 
   late ConfettiController controller;
-
   late AnimationController animationController;
   late Size size;
 
-  void addParticles(ConfettiOptions options) {
-    playAnimation();
+  ConfettiOptions get options => widget.options ?? const ConfettiOptions();
 
+  void addParticles(ConfettiOptions options) {
     widget.onLaunch?.call(options);
 
     final x = options.x * size.width;
     final y = options.y * size.height;
 
-    final particles = <ConfettiParticle>[];
+    final particles = <Particle>[];
 
     for (int i = 0; i < options.particleCount; i++) {
-      final physic = ConfettiParticlePhysics.fromOptions(
+      final physic = ParticlePhysics.fromOptions(
         options,
         x: x,
         y: y,
       );
 
-      final particle = ConfettiParticle(
+      final particle = Particle(
         painter: widget.particleBuilder(i),
         physics: physic,
       );
@@ -150,12 +151,14 @@ class _ConfettiState extends State<Confetti>
       particles.add(particle);
     }
 
-    final batch = ConfettiParticleBatch(
+    final batch = ParticleBatch(
       particles: particles,
       tickLeft: options.ticks,
     );
 
     batches.add(batch);
+
+    playAnimation();
   }
 
   void initAnimation() {
@@ -262,7 +265,7 @@ class _ConfettiState extends State<Confetti>
     batches.removeWhere((batch) => batch.isFinished);
 
     for (final batch in batches) {
-      batch.update();
+      batch.updatePhysics();
     }
 
     if (batches.isEmpty) {
