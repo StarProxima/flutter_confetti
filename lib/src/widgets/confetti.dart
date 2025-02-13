@@ -119,12 +119,15 @@ class Confetti extends StatefulWidget {
 
 class _ConfettiState extends State<Confetti>
     with SingleTickerProviderStateMixin {
+  static const tickTime = Duration(milliseconds: 1000 ~/ 60);
+
   List<ParticleBatch> batches = [];
-  List<Timer> timers = [];
+  List<Timer> launchTimers = [];
+  Timer? tickTimer;
 
   late ConfettiController controller;
-  late AnimationController animationController;
   late Size size;
+  late AnimationController animationController;
 
   ConfettiOptions get options => widget.options ?? const ConfettiOptions();
 
@@ -154,7 +157,7 @@ class _ConfettiState extends State<Confetti>
     final batch = ParticleBatch(
       particles: particles,
       tickLeft: options.ticks,
-    );
+    )..updatePhysics();
 
     batches.add(batch);
 
@@ -163,17 +166,32 @@ class _ConfettiState extends State<Confetti>
     playAnimation();
   }
 
-  void initAnimation() {
-    animationController = AnimationController(
-      vsync: this,
-      // Duration doesn't matter, we're tied to AnimationController ticks
-      duration: const Duration(seconds: 1),
-    );
-  }
-
   void playAnimation() {
     if (!animationController.isAnimating) {
       animationController.repeat();
+    }
+
+    if (tickTimer?.isActive ?? false) return;
+
+    tickTimer = Timer.periodic(
+      tickTime,
+      (_) {
+        onTick();
+      },
+    );
+  }
+
+  void onTick() {
+    batches.removeWhere((batch) => batch.isFinished);
+
+    for (final batch in batches) {
+      batch.updatePhysics();
+    }
+
+    if (batches.isEmpty) {
+      tickTimer?.cancel();
+      animationController.stop();
+      widget.onFinished?.call();
     }
   }
 
@@ -189,7 +207,7 @@ class _ConfettiState extends State<Confetti>
       }
     }
 
-    setupTimerForOptions(options);
+    setupLaunchTimer(options);
 
     addParticles(options);
 
@@ -218,17 +236,7 @@ class _ConfettiState extends State<Confetti>
     }
   }
 
-  void kill() {
-    for (final timer in timers) {
-      timer.cancel();
-    }
-
-    for (final batch in batches) {
-      batch.kill();
-    }
-  }
-
-  void setupTimerForOptions(ConfettiOptions options) {
+  void setupLaunchTimer(ConfettiOptions options) {
     final interval = options.launchInterval;
 
     if (interval != null) {
@@ -259,21 +267,19 @@ class _ConfettiState extends State<Confetti>
         },
       );
 
-      timers.add(timer);
+      launchTimers.add(timer);
     }
   }
 
-  void onTick() {
-    batches.removeWhere((batch) => batch.isFinished);
+  void kill() {
+    tickTimer?.cancel();
 
-    for (final batch in batches) {
-      batch.updatePhysics();
+    for (final timer in launchTimers) {
+      timer.cancel();
     }
 
-    if (batches.isEmpty) {
-      animationController.stop();
-
-      widget.onFinished?.call();
+    for (final batch in batches) {
+      batch.kill();
     }
   }
 
@@ -281,9 +287,12 @@ class _ConfettiState extends State<Confetti>
   void initState() {
     super.initState();
 
-    initAnimation();
-
     controller = widget.controller ?? ConfettiController();
+
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    );
 
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
@@ -327,11 +336,11 @@ class _ConfettiState extends State<Confetti>
 
   @override
   void dispose() {
-    animationController.dispose();
-
     kill();
 
     ConfettiLauncher.unload(controller);
+
+    animationController.dispose();
 
     super.dispose();
   }
@@ -343,7 +352,6 @@ class _ConfettiState extends State<Confetti>
       painter: ConfettiPainter(
         repaint: animationController,
         batches: batches,
-        onTick: onTick,
       ),
       child: widget.child ?? const SizedBox.expand(),
     );
