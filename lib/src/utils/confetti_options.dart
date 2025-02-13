@@ -26,6 +26,7 @@ class ConfettiOptions {
   final List<Color> colors;
   final double scalar;
   final double waveIntensity;
+  final double waveFactor;
   final Duration? launchDelay;
   final Duration? launchPeriod;
   final Duration? launchInterval;
@@ -50,6 +51,7 @@ class ConfettiOptions {
     this.ticks = 200,
     this.opacityTicks = 75,
     this.waveIntensity = 0,
+    this.waveFactor = 1,
     this.launchDelay,
     this.launchPeriod,
     this.launchInterval,

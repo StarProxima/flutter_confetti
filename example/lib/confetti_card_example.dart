@@ -55,10 +55,10 @@ class _MainAppState extends State<MainApp> {
                   options: ConfettiOptions(
                     colors: colots,
                     particleCount: 12,
-                    startVelocity: 20,
+                    startVelocity: 15,
                     scalar: 0.5,
                     spread: 150,
-                    y: -5,
+                    y: -3.5,
                     angle: 270,
                     ticks: 500,
                     gravity: 0.2,
@@ -75,10 +75,10 @@ class _MainAppState extends State<MainApp> {
                   options: ConfettiOptions(
                     colors: colots,
                     particleCount: 15,
-                    startVelocity: 20,
+                    startVelocity: 15,
                     scalar: 0.5,
                     spread: 150,
-                    y: -5,
+                    y: -3.5,
                     angle: 270,
                     ticks: 500,
                     gravity: 0.2,
@@ -95,10 +95,10 @@ class _MainAppState extends State<MainApp> {
                   options: ConfettiOptions(
                     colors: colots,
                     particleCount: 45,
-                    startVelocity: 20,
+                    startVelocity: 15,
                     scalar: 0.5,
                     spread: 150,
-                    y: -5,
+                    y: -3.5,
                     angle: 270,
                     ticks: 500,
                     gravity: 0.2,
@@ -117,7 +117,7 @@ class _MainAppState extends State<MainApp> {
                   options: ConfettiOptions(
                     colors: colots,
                     particleCount: 40,
-                    startVelocity: 18,
+                    startVelocity: 15,
                     scalar: 0.5,
                     spread: 150,
                     y: 0.25,
@@ -140,10 +140,10 @@ class _MainAppState extends State<MainApp> {
                   options: ConfettiOptions(
                     colors: colots,
                     particleCount: 15,
-                    startVelocity: 20,
+                    startVelocity: 15,
                     scalar: 0.7,
                     spread: 150,
-                    y: -5,
+                    y: -3.5,
                     angle: 270,
                     ticks: 500,
                     gravity: 0.2,
@@ -159,10 +159,10 @@ class _MainAppState extends State<MainApp> {
                   options: ConfettiOptions(
                     colors: colots,
                     particleCount: 15,
-                    startVelocity: 20,
+                    startVelocity: 15,
                     scalar: 0.7,
                     spread: 150,
-                    y: -5,
+                    y: -3.5,
                     angle: 270,
                     ticks: 500,
                     gravity: 0.2,
@@ -182,7 +182,7 @@ class _MainAppState extends State<MainApp> {
                     startVelocity: 15,
                     scalar: 0.7,
                     spread: 150,
-                    y: -5,
+                    y: -3.5,
                     angle: 270,
                     ticks: 500,
                     gravity: 0.2,
@@ -226,7 +226,7 @@ class _MainAppState extends State<MainApp> {
                     startVelocity: 15,
                     spread: 150,
                     scalar: 0.7,
-                    y: -5,
+                    y: -3.5,
                     angle: 270,
                     ticks: 500,
                     gravity: 0.25,
@@ -260,7 +260,7 @@ class _MainAppState extends State<MainApp> {
                     startVelocity: 15,
                     spread: 150,
                     scalar: 0.7,
-                    y: -5,
+                    y: -3.5,
                     angle: 270,
                     ticks: 500,
                     gravity: 0.25,
@@ -370,8 +370,8 @@ class __ConfettiCardState extends State<_ConfettiCard> {
             children: [
               Stack(
                 children: [
-                  // child,
                   ClipPath(
+                    clipBehavior: Clip.none,
                     child: Container(
                       width: 330,
                       decoration: BoxDecoration(

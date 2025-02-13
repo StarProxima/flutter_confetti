@@ -23,6 +23,7 @@ class ParticlePhysics {
   double tiltCos;
   double random;
   double waveIntensity;
+  double waveFactor;
   bool flat;
 
   double opacity = 1;
@@ -60,6 +61,7 @@ class ParticlePhysics {
     required this.ovalScalar,
     required this.scalar,
     required this.waveIntensity,
+    required this.waveFactor,
     required this.flat,
     required this.tiltCos,
     required this.totalTicks,
@@ -103,6 +105,7 @@ class ParticlePhysics {
       ovalScalar: 0.6,
       scalar: options.scalar,
       waveIntensity: options.waveIntensity,
+      waveFactor: options.waveFactor,
       flat: options.flat,
       totalTicks: options.ticks,
       opacityTicks: options.opacityTicks,
@@ -117,7 +120,8 @@ class ParticlePhysics {
 
     final wave = waveIntensity != 0
         ? sin(2 * pi * _randomDouble +
-            (tickLeft * waveIntensity * (_randomDouble + 0.1) / 20))
+                (tickLeft * waveIntensity * (_randomDouble + 0.1) / 20)) *
+            waveFactor
         : 0.0;
 
     x += cos(angle2D) * velocity + drift + wave;
