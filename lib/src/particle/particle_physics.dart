@@ -74,7 +74,7 @@ class ParticlePhysics {
     required double y,
   }) {
     final radAngle = options.angle * (pi / 180);
-    final radSpread = options.spread * (pi / 180);
+    final radSpread = options.angleSpread * (pi / 180);
 
     final driftSpread = options.driftSpread;
 
@@ -87,8 +87,8 @@ class ParticlePhysics {
       wobble: _random.nextDouble() * 10,
       wobbleSpeed:
           options.wobbleSpeed ?? min(0.11, _random.nextDouble() * 0.1 + 0.05),
-      velocity: options.startVelocity * 0.5 +
-          _random.nextDouble() * options.startVelocity,
+      velocity:
+          options.velocity * 0.5 + _random.nextDouble() * options.velocity,
       angle2D: -radAngle + (0.5 * radSpread - _random.nextDouble() * radSpread),
       tiltAngle: (_random.nextDouble() * (0.75 - 0.25) + 0.25) * pi,
       decay: options.decay,

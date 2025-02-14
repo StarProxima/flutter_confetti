@@ -18,10 +18,10 @@ class ConfettiOptions {
 
   /// How far off center the confetti can go, in degrees.
   /// 45 means the confetti will launch at the defined angle plus or minus 22.5 degrees.
-  final double spread;
+  final double angleSpread;
 
   /// How fast the confetti will start going, in pixels.
-  final double startVelocity;
+  final double velocity;
 
   /// How quickly the confetti will lose speed.
   /// Keep this number between 0 and 1, otherwise the confetti will gain speed.
@@ -78,8 +78,8 @@ class ConfettiOptions {
     this.colors = defaultColors,
     this.particleCount = 50,
     this.angle = 90,
-    this.spread = 45,
-    this.startVelocity = 45,
+    this.angleSpread = 45,
+    this.velocity = 45,
     this.decay = 0.9,
     this.gravity = 1,
     this.drift = 0,
@@ -104,8 +104,8 @@ class ConfettiOptions {
   ConfettiOptions copyWith({
     int? particleCount,
     double? angle,
-    double? spread,
-    double? startVelocity,
+    double? angleSpread,
+    double? velocity,
     double? decay,
     double? gravity,
     double? drift,
@@ -128,8 +128,8 @@ class ConfettiOptions {
       ConfettiOptions(
         particleCount: particleCount ?? this.particleCount,
         angle: angle ?? this.angle,
-        spread: spread ?? this.spread,
-        startVelocity: startVelocity ?? this.startVelocity,
+        angleSpread: angleSpread ?? this.angleSpread,
+        velocity: velocity ?? this.velocity,
         decay: decay ?? this.decay,
         gravity: gravity ?? this.gravity,
         drift: drift ?? this.drift,
