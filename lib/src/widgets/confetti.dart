@@ -6,21 +6,28 @@ import '../utils/confetti_controller.dart';
 import '../utils/confetti_options.dart';
 import '../particle/particle_physics.dart';
 import '../shapes/painter/particle_painter.dart';
-import '../utils/confetti_launcher.dart';
-import '../utils/confetti_launcher_config.dart';
 import '../utils/confetti_painter.dart';
 import '../particle/particle.dart';
 import '../particle/particle_batch.dart';
 
 typedef ParticleBuilder = ParticlePainter Function(int index);
 
+typedef ConfettiOnReady = void Function(
+  ConfettiController controller,
+  ConfettiOptions options,
+);
+
+typedef ConfettiOnLaunch = void Function(
+  ConfettiOptions options,
+  ParticleBatch batch,
+);
+
 class Confetti extends StatefulWidget {
   final ConfettiController? controller;
   final ConfettiOptions? options;
   final ParticleBuilder particleBuilder;
-  final void Function(ConfettiController controller, ConfettiOptions options)?
-      onReady;
-  final void Function(ConfettiOptions options, ParticleBatch batch)? onLaunch;
+  final ConfettiOnReady? onReady;
+  final ConfettiOnLaunch? onLaunch;
   final void Function()? onFinished;
   final bool instant;
   final Widget? child;
@@ -38,16 +45,15 @@ class Confetti extends StatefulWidget {
   });
 
   @override
-  State<Confetti> createState() => _ConfettiState();
+  State<Confetti> createState() => ConfettiState();
 
   static ConfettiController launch(
     BuildContext context, {
     required ConfettiOptions options,
     ParticleBuilder particleBuilder = ParticlePainter.defaultBuilder,
     void Function(OverlayEntry overlayEntry)? insertInOverlay,
-    final void Function(ConfettiController controller, ConfettiOptions options)?
-        onReady,
-    final void Function(ConfettiOptions options, ParticleBatch batch)? onLaunch,
+    final ConfettiOnReady? onReady,
+    final ConfettiOnLaunch? onLaunch,
     void Function(OverlayEntry overlayEntry)? onFinished,
   }) {
     OverlayEntry? overlayEntry;
@@ -92,9 +98,12 @@ class Confetti extends StatefulWidget {
   }
 }
 
-class _ConfettiState extends State<Confetti>
+class ConfettiState extends State<Confetti>
     with SingleTickerProviderStateMixin {
-  static const tickTime = Duration(milliseconds: 1000 ~/ 60);
+  static const tickRate = 60;
+  static const tickTime = Duration(
+    milliseconds: 1000 ~/ tickRate,
+  );
 
   List<ParticleBatch> batches = [];
   List<Timer> launchTimers = [];
@@ -105,6 +114,40 @@ class _ConfettiState extends State<Confetti>
   late AnimationController animationController;
 
   ConfettiOptions get options => widget.options ?? const ConfettiOptions();
+
+  void playAnimation() {
+    if (!animationController.isAnimating) {
+      animationController.repeat();
+    }
+
+    final tickTimer = this.tickTimer;
+    if (tickTimer == null || !tickTimer.isActive) {
+      this.tickTimer = Timer.periodic(
+        tickTime,
+        (_) {
+          onTick();
+        },
+      );
+    }
+  }
+
+  void onTick() {
+    batches.removeWhere((batch) => batch.isFinished);
+
+    for (final batch in batches) {
+      batch.updatePhysics();
+    }
+
+    if (batches.isEmpty) {
+      tickTimer?.cancel();
+
+      Future(() {
+        if (!mounted) return;
+
+        animationController.stop();
+      });
+    }
+  }
 
   void addParticles(ConfettiOptions options) {
     final x = options.x * size.width;
@@ -130,6 +173,7 @@ class _ConfettiState extends State<Confetti>
     }
 
     final batch = ParticleBatch(
+      options: options,
       particles: particles,
       tickLeft: options.ticks,
     )..updatePhysics();
@@ -139,35 +183,6 @@ class _ConfettiState extends State<Confetti>
     widget.onLaunch?.call(options, batch);
 
     playAnimation();
-  }
-
-  void playAnimation() {
-    if (!animationController.isAnimating) {
-      animationController.repeat();
-    }
-
-    if (tickTimer?.isActive ?? false) return;
-
-    tickTimer = Timer.periodic(
-      tickTime,
-      (_) {
-        onTick();
-      },
-    );
-  }
-
-  void onTick() {
-    batches.removeWhere((batch) => batch.isFinished);
-
-    for (final batch in batches) {
-      batch.updatePhysics();
-    }
-
-    if (batches.isEmpty) {
-      tickTimer?.cancel();
-      animationController.stop();
-      widget.onFinished?.call();
-    }
   }
 
   Future<void> launch(ConfettiOptions? confettiOptions) async {
@@ -246,16 +261,18 @@ class _ConfettiState extends State<Confetti>
     }
   }
 
-  void kill() {
-    tickTimer?.cancel();
-
+  void clear() {
     for (final timer in launchTimers) {
       timer.cancel();
     }
 
     for (final batch in batches) {
-      batch.kill();
+      batch.stop();
     }
+
+    tickTimer?.cancel();
+
+    setState(onTick);
   }
 
   @override
@@ -281,13 +298,7 @@ class _ConfettiState extends State<Confetti>
       },
     );
 
-    ConfettiLauncher.load(
-      controller,
-      ConfettiLauncherConfig(
-        onLaunch: launch,
-        onKill: kill,
-      ),
-    );
+    controller.attach(this);
   }
 
   @override
@@ -295,25 +306,21 @@ class _ConfettiState extends State<Confetti>
     super.didUpdateWidget(oldWidget);
 
     if (widget.controller != oldWidget.controller) {
-      ConfettiLauncher.unload(controller);
+      controller.dettach();
 
       controller = widget.controller ?? ConfettiController();
 
-      ConfettiLauncher.load(
-        controller,
-        ConfettiLauncherConfig(
-          onLaunch: launch,
-          onKill: kill,
-        ),
-      );
+      controller.attach(this);
     }
   }
 
   @override
   void dispose() {
-    kill();
+    clear();
 
-    ConfettiLauncher.unload(controller);
+    widget.onFinished?.call();
+
+    controller.dettach();
 
     animationController.dispose();
 

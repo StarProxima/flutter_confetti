@@ -1,18 +1,22 @@
 import 'dart:ui';
 
+import 'package:flutter_confetti/src/utils/confetti_options.dart';
+
 import 'particle.dart';
 
 class ParticleBatch {
+  final ConfettiOptions options;
   final List<Particle> particles;
 
-  int tickLeft;
-
-  bool get isFinished => tickLeft <= 0;
+  int _tickLeft;
+  int get tickLeft => _tickLeft;
+  bool get isFinished => _tickLeft <= 0;
 
   ParticleBatch({
+    required this.options,
     required this.particles,
-    required this.tickLeft,
-  });
+    required int tickLeft,
+  }) : _tickLeft = tickLeft;
 
   void paint(Canvas canvas) {
     for (final particle in particles) {
@@ -24,14 +28,14 @@ class ParticleBatch {
   }
 
   void updatePhysics() {
-    tickLeft--;
+    _tickLeft--;
 
     for (final particle in particles) {
-      particle.physics.update(tickLeft);
+      particle.physics.update(_tickLeft);
     }
   }
 
-  void kill() {
-    tickLeft = 0;
+  void stop() {
+    _tickLeft = 0;
   }
 }
